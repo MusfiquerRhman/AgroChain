@@ -1,9 +1,8 @@
 import Head from 'next/head'
 import NavBar from "../components/NavBar"
-import ProductsList from '../components/ProductsList'
+import ProductsList from '../components/productsComponents/ProductsList'
 
 export default function Home({products}) {
-  console.log(products)
   return (
     <div>
       <Head>

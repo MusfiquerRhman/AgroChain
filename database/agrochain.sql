@@ -128,7 +128,7 @@ CREATE TABLE `products_details` (
   `PRODUCT_MEASUREMENT_UNIT` char(10) DEFAULT NULL,
   `PRODUCT_AGRO_PRICE` double(10,4) DEFAULT 0.0000,
   `PRODUCT_DISCOUNT` double(3,2) DEFAULT 0.00,
-  'PRODUCT_IMG' LONGBLOB NOT NULL,
+  'PRODUCT_IMG' varchar(50) NOT NULL,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------

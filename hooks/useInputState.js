@@ -6,6 +6,6 @@ export default function useInputState(initialValue = "") {
         setState(e.target.value);
     }
     return (
-        [state, handleChange]
+        [state, handleChange, setState]
     )
 }
