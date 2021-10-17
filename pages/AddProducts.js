@@ -2,6 +2,9 @@ import React, {useState, useEffect} from 'react';
 import LinearProgressWithLabel from '@mui/material/LinearProgress';
 import useInputState from '../hooks/useInputState';
 import axios from 'axios';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Paper from '@mui/material/Paper';
 
 function AddProducts() {
     const [nameEN, handleChangeNameEn, setNameEn] = useInputState("");
@@ -9,10 +12,11 @@ function AddProducts() {
     const [inStockQuantity, handleChangeInStockQuantity, setInStockQuantity] = useInputState("");
     const [measurementUnit, handleChangeMeasurementUnit, setMeasurementUnit] = useInputState("");
     const [price, handleChangePrice, setPrice] = useInputState("");
-    const [discount, handleChangeDicount, setDiscout] = useInputState("");
+    const [discount, handleChangeDicount, setDiscout] = useInputState(0);
 
     const [image, setImage] = useState("");
     const [uploadProgress, setUploadProgress] = useState(0);
+    const [status, setstatus] = useState(0);
 
     useEffect(() => {
         setTimeout(() => {
@@ -56,8 +60,15 @@ function AddProducts() {
         }
     
         axios.post('/api/products', formdata, progress).then(res => {
-            setUploadProgress(100)
-            console.log(res);
+            if(res.status === 201){
+                setUploadProgress(100);
+                setstatus(201);
+            }
+            else {
+                setUploadProgress(0);
+                setstatus(500);
+            }
+            console.log(res.status);
         })
         .then(res => console.log(res))
         .catch(err => console.log(err));
@@ -66,43 +77,78 @@ function AddProducts() {
         console.log(uploadProgress)
     }
 
+    let flash = ""
+
+    if(status === 201){
+        flash = <div> <p> Product added succesfuly </p> </div>
+    }
+    else if(status === 500){
+        flash = <div> <p> Failed to add product, please try a agian </p> </div>
+    }
+
     return (
         <div>
-            <form>
-                <LinearProgressWithLabel value={uploadProgress} variant="determinate"/>
-                Name (English)
-                <input type="text"
-                    value={nameEN}
-                    onChange={handleChangeNameEn}
-                />
-                Name (bn)
-                <input type="text"
-                    value={nameBN}
-                    onChange={handleChangeNameBn}
-                />
-                in stock
-                <input type="number"
-                    value={inStockQuantity}
-                    onChange={handleChangeInStockQuantity}
-                />
-                mesurement unit
-                <input type="text"
-                    value={measurementUnit}
-                    onChange={handleChangeMeasurementUnit}
-                />
-                price
-                <input type="text"
-                    value={price}
-                    onChange={handleChangePrice}
-                />
-                discount
-                <input type="text"
-                    value={discount}
-                    onChange={handleChangeDicount}
-                />
-                <input name="image" type="file" onChange={(e) => {imageSelectHandeler(e.target.files)}}/>
-                <button onClick={submitForm}>Submit</button>
-            </form>
+            {flash}
+            <Paper elevation={6} > 
+                <form>
+                    <LinearProgressWithLabel value={uploadProgress} variant="determinate"/>
+
+                    <TextField id="standard-basic" 
+                        label="Name (English)" 
+                        variant="standard" 
+                        value={nameEN} 
+                        onChange={handleChangeNameEn}/>
+
+                    <TextField id="standard-basic" 
+                        label="Name (bn)" 
+                        variant="standard" 
+                        value={nameBN} 
+                        onChange={handleChangeNameBn}/>
+                    
+                    <TextField id="standard-basic" 
+                        label="In stock" 
+                        variant="standard" 
+                        type="number"
+                        value={inStockQuantity}
+                        onChange={handleChangeInStockQuantity}/>
+                    
+
+                    <TextField id="standard-basic" 
+                        label="mesurement unit" 
+                        variant="standard" 
+                        value={measurementUnit}
+                        onChange={handleChangeMeasurementUnit}/>
+
+                    <TextField id="standard-basic" 
+                        label="price" 
+                        variant="standard" 
+                        type="number"
+                        value={price}
+                        onChange={handleChangePrice}/>
+                    
+                    <TextField id="standard-basic" 
+                        label="Discount" 
+                        type="number"
+                        variant="standard" 
+                        value={discount}
+                        onChange={handleChangeDicount}/>
+
+                    <Button
+                        variant="contained"
+                        component="label"
+                    >
+                        Upload File
+                        <input
+                            name="image" 
+                            type="file" 
+                            onChange={(e) => {imageSelectHandeler(e.target.files)}}
+                            hidden
+                        />
+                    </Button>
+                    
+                    <Button onClick={submitForm} variant="outlined" >Submit</Button>
+                </form>
+            </Paper>
         </div>
     )
 }
@@ -110,6 +156,23 @@ function AddProducts() {
 export default AddProducts;
 
 
+{/* <TextField id="standard-basic" 
+                    label="Standard" 
+                    variant="Select File" 
+                    name="image" 
+                    type="file" 
+                    onChange={(e) => {imageSelectHandeler(e.target.files)}}/> */}
+{/* <Button
+  variant="contained"
+  component="label"
+>
+  Upload File
+  <input
+    type="file"
+    hidden
+  />
+</Button> */}
+// <input name="image" type="file" onChange={(e) => {imageSelectHandeler(e.target.files)}}/>
 // const submitForm = async () => {
 //     const response = await fetch('/api/products', {
 //         method: 'POST',

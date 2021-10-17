@@ -13,12 +13,7 @@ let handle = app.getRequestHandler()
 var jsonParser = bodyParser.json()
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
-//let multer = require("multer")
-//let upload = multer();
-
 router.post("/", upload, (req, res) => {
-    console.log(req.body);
-    console.log(req.file);
     const nameEN = req.body.nameEN;
     const nameBN = req.body.nameBN;
     const inStockQuantity = req.body.inStockQuantity;
@@ -28,15 +23,15 @@ router.post("/", upload, (req, res) => {
     const image = req.file.filename;
             
     const sql = `INSERT INTO products_details (PRODUCT_NAME_EN, PRODUCT_NAME_BN, PRODUCT_IN_STOCK_QUANTITY,` +
-                    ` PRODUCT_MEASUREMENT_UNIT, PRODUCT_AGRO_PRICE, PRODUCT_DISCOUNT, PRODUCT_IMG) VALUES ` +
-                    `("${nameEN}", "${nameBN}", ${inStockQuantity}, "${measurementUnit}", ${price}, ${discount}), ${image}`
+                ` PRODUCT_MEASUREMENT_UNIT, PRODUCT_AGRO_PRICE, PRODUCT_DISCOUNT, PRODUCT_IMG) VALUES ` +
+                `("${nameEN}", "${nameBN}", ${inStockQuantity}, "${measurementUnit}", ${price}, ${discount}, "${image}")`
             
     connection.query(sql, (err, result) => {
         if(err){
-            console.log(err)
+            res.status(500);
         }
         else {
-            res.status(200).send({msg: "Product Added!"});
+            res.status(201).json({result});
         }
     })   
 })
