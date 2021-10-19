@@ -2,9 +2,11 @@ import React, {useState, useEffect} from 'react';
 import LinearProgressWithLabel from '@mui/material/LinearProgress';
 import useInputState from '../hooks/useInputState';
 import axios from 'axios';
+
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
 
 function AddProducts() {
     const [nameEN, handleChangeNameEn, setNameEn] = useInputState("");
@@ -63,22 +65,20 @@ function AddProducts() {
             if(res.status === 201){
                 setUploadProgress(100);
                 setstatus(201);
+                resetFields();
             }
             else {
                 setUploadProgress(0);
                 setstatus(500);
             }
             console.log(res.status);
-        })
-        .then(res => console.log(res))
-        .catch(err => console.log(err));
-
-        resetFields();
-        console.log(uploadProgress)
+        }).catch(err => {
+            setUploadProgress(0);
+            setstatus(500);
+        });
     }
 
     let flash = ""
-
     if(status === 201){
         flash = <div> <p> Product added succesfuly </p> </div>
     }
@@ -92,61 +92,58 @@ function AddProducts() {
             <Paper elevation={6} > 
                 <form>
                     <LinearProgressWithLabel value={uploadProgress} variant="determinate"/>
+                    <Box sx={{ width: '100%' }}>
+                        <TextField id="standard-basic" 
+                            label="Name (English)" 
+                            variant="standard" 
+                            value={nameEN} 
+                            onChange={handleChangeNameEn}/>
 
-                    <TextField id="standard-basic" 
-                        label="Name (English)" 
-                        variant="standard" 
-                        value={nameEN} 
-                        onChange={handleChangeNameEn}/>
+                        <TextField id="standard-basic" 
+                            label="Name (bn)" 
+                            variant="standard" 
+                            value={nameBN} 
+                            onChange={handleChangeNameBn}/>
+                        
+                        <TextField id="standard-basic" 
+                            label="In stock" 
+                            variant="standard" 
+                            type="number"
+                            value={inStockQuantity}
+                            onChange={handleChangeInStockQuantity}/>
 
-                    <TextField id="standard-basic" 
-                        label="Name (bn)" 
-                        variant="standard" 
-                        value={nameBN} 
-                        onChange={handleChangeNameBn}/>
-                    
-                    <TextField id="standard-basic" 
-                        label="In stock" 
-                        variant="standard" 
-                        type="number"
-                        value={inStockQuantity}
-                        onChange={handleChangeInStockQuantity}/>
-                    
+                        <TextField id="standard-basic" 
+                            label="mesurement unit" 
+                            variant="standard" 
+                            value={measurementUnit}
+                            onChange={handleChangeMeasurementUnit}/>
 
-                    <TextField id="standard-basic" 
-                        label="mesurement unit" 
-                        variant="standard" 
-                        value={measurementUnit}
-                        onChange={handleChangeMeasurementUnit}/>
+                        <TextField id="standard-basic" 
+                            label="price" 
+                            variant="standard" 
+                            type="number"
+                            value={price}
+                            onChange={handleChangePrice}/>
+                        
+                        <TextField id="standard-basic" 
+                            label="Discount" 
+                            type="number"
+                            variant="standard" 
+                            value={discount}
+                            onChange={handleChangeDicount}/>
 
-                    <TextField id="standard-basic" 
-                        label="price" 
-                        variant="standard" 
-                        type="number"
-                        value={price}
-                        onChange={handleChangePrice}/>
-                    
-                    <TextField id="standard-basic" 
-                        label="Discount" 
-                        type="number"
-                        variant="standard" 
-                        value={discount}
-                        onChange={handleChangeDicount}/>
-
-                    <Button
-                        variant="contained"
-                        component="label"
-                    >
-                        Upload File
-                        <input
-                            name="image" 
-                            type="file" 
-                            onChange={(e) => {imageSelectHandeler(e.target.files)}}
-                            hidden
-                        />
-                    </Button>
-                    
-                    <Button onClick={submitForm} variant="outlined" >Submit</Button>
+                        <Button variant="contained" component="label">
+                            Upload File
+                            <input
+                                name="image" 
+                                type="file" 
+                                onChange={(e) => {imageSelectHandeler(e.target.files)}}
+                                hidden
+                            />
+                        </Button>
+                        
+                        <Button onClick={submitForm} variant="outlined" >Submit</Button>
+                    </Box>
                 </form>
             </Paper>
         </div>

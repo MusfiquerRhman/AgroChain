@@ -1,5 +1,4 @@
 import Head from 'next/head'
-import NavBar from "../components/NavBar"
 import ProductsList from '../components/productsComponents/ProductsList'
 
 export default function Home({products}) {
@@ -12,7 +11,6 @@ export default function Home({products}) {
       </Head>
 
       <main>
-        <NavBar/>
         <ProductsList products={products} key={products.PRODUCT_ID}/>
       </main>
 
