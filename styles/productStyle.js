@@ -1,8 +1,11 @@
 import { makeStyles } from "@mui/styles"
 
 const style = makeStyles(() => ({
+    input: {
+        border: "1px solid #00B3A6"
+    },
     card: {
-        boxShadow: "0 0 2rem #00B3A6",
+        boxShadow: "0 0 1.2rem #006B63",
     }
 }))
 

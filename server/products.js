@@ -14,6 +14,8 @@ var jsonParser = bodyParser.json()
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 router.post("/", upload, (req, res) => {
+    
+    console.log(req.file)
     const nameEN = req.body.nameEN;
     const nameBN = req.body.nameBN;
     const inStockQuantity = req.body.inStockQuantity;
@@ -21,7 +23,7 @@ router.post("/", upload, (req, res) => {
     const price = req.body.price;
     const discount = req.body.discount;
     const image = req.file.filename;
-            
+
     const sql = `INSERT INTO products_details (PRODUCT_NAME_EN, PRODUCT_NAME_BN, PRODUCT_IN_STOCK_QUANTITY,` +
                 ` PRODUCT_MEASUREMENT_UNIT, PRODUCT_AGRO_PRICE, PRODUCT_DISCOUNT, PRODUCT_IMG) VALUES ` +
                 `("${nameEN}", "${nameBN}", ${inStockQuantity}, "${measurementUnit}", ${price}, ${discount}, "${image}")`

@@ -3,11 +3,14 @@ import NavBar from "../components/NavBar"
 import { ThemeProvider } from '@mui/material/styles';
 import theme from "../styles/theme"
 import Grid from '@mui/material/Grid';
+import CssBaseline from "@mui/material/CssBaseline";
 
-function MyApp({ Component, pageProps }) {
+function MyApp(props) {
+  const { Component, pageProps } = props;
   return (
     <div>
       <ThemeProvider theme={theme}>
+        <CssBaseline />
         <Grid container direction="column">
           <Grid item><NavBar/></Grid>
           <Grid item container>

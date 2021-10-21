@@ -1,12 +1,16 @@
 import React, {useState, useEffect} from 'react';
-import LinearProgressWithLabel from '@mui/material/LinearProgress';
 import useInputState from '../hooks/useInputState';
 import axios from 'axios';
 
+import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+
+import BorderLinearProgress from '../styles/BorderLinearProgress';
+import style from "../styles/addProductStyle"
 
 function AddProducts() {
     const [nameEN, handleChangeNameEn, setNameEn] = useInputState("");
@@ -19,6 +23,9 @@ function AddProducts() {
     const [image, setImage] = useState("");
     const [uploadProgress, setUploadProgress] = useState(0);
     const [status, setstatus] = useState(0);
+    const [displayImage, setDisplayImage] = useState("");
+
+    const classes = style()
 
     useEffect(() => {
         setTimeout(() => {
@@ -28,6 +35,13 @@ function AddProducts() {
 
     const imageSelectHandeler = files => {
         setImage(files[0]);
+        const reader = new FileReader();
+        reader.onload = () => {
+            if(reader.readyState === 2){
+                setDisplayImage(reader.result)
+            }
+        }
+        reader.readAsDataURL(files[0])
     }
 
     const resetFields = () => {
@@ -78,71 +92,120 @@ function AddProducts() {
         });
     }
 
-    let flash = ""
+    let flashMessage = ""
     if(status === 201){
-        flash = <div> <p> Product added succesfuly </p> </div>
+        flashMessage = <div> <p> Product added succesfuly </p> </div>
     }
     else if(status === 500){
-        flash = <div> <p> Failed to add product, please try a agian </p> </div>
+        flashMessage = <div> <p> Failed to add product, please try a agian </p> </div>
+    }
+
+    let imageSelectedMsg = <Typography variant="h4" className = {classes.imagetext}>Select an Image</Typography>
+    if(displayImage !== ""){
+        imageSelectedMsg = <img src= {displayImage} className={classes.image}/>
     }
 
     return (
         <div>
-            {flash}
+            {flashMessage}
             <Paper elevation={6} > 
-                <form>
-                    <LinearProgressWithLabel value={uploadProgress} variant="determinate"/>
+                <form className={classes.form}>
+                    <Typography variant="h3">
+                        Enter product details
+                    </Typography>
+                    <BorderLinearProgress value={uploadProgress} variant="determinate"/>
                     <Box sx={{ width: '100%' }}>
-                        <TextField id="standard-basic" 
-                            label="Name (English)" 
-                            variant="standard" 
-                            value={nameEN} 
-                            onChange={handleChangeNameEn}/>
-
-                        <TextField id="standard-basic" 
-                            label="Name (bn)" 
-                            variant="standard" 
-                            value={nameBN} 
-                            onChange={handleChangeNameBn}/>
-                        
-                        <TextField id="standard-basic" 
-                            label="In stock" 
-                            variant="standard" 
-                            type="number"
-                            value={inStockQuantity}
-                            onChange={handleChangeInStockQuantity}/>
-
-                        <TextField id="standard-basic" 
-                            label="mesurement unit" 
-                            variant="standard" 
-                            value={measurementUnit}
-                            onChange={handleChangeMeasurementUnit}/>
-
-                        <TextField id="standard-basic" 
-                            label="price" 
-                            variant="standard" 
-                            type="number"
-                            value={price}
-                            onChange={handleChangePrice}/>
-                        
-                        <TextField id="standard-basic" 
-                            label="Discount" 
-                            type="number"
-                            variant="standard" 
-                            value={discount}
-                            onChange={handleChangeDicount}/>
-
-                        <Button variant="contained" component="label">
-                            Upload File
-                            <input
-                                name="image" 
-                                type="file" 
-                                onChange={(e) => {imageSelectHandeler(e.target.files)}}
-                                hidden
-                            />
-                        </Button>
-                        
-                        <Button onClick={submitForm} variant="outlined" >Submit</Button>
+                        <Grid container spacing={2} direction="row" justifyContent="space-between">
+                            <Grid container item direction="column" spacing={2} xs={12} lg={6}>
+                                <Grid item>
+                                    <TextField id="standard-basic" 
+                                        label="Name (English)" 
+                                        variant="standard" 
+                                        value={nameEN} 
+                                        onChange={handleChangeNameEn}
+                                        required
+                                        fullWidth
+                                        InputProps={{
+                                            classes: {
+                                            root: classes.root,
+                                            disabled: classes.disabled,
+                                            notchedOutline: classes.notchedOutline
+                                            }
+                                        }} 
+                                    />
+                                </Grid>
+                                <Grid item>
+                                    <TextField id="standard-basic" 
+                                        label="Name (bn)" 
+                                        variant="standard" 
+                                        value={nameBN} 
+                                        onChange={handleChangeNameBn}
+                                        required
+                                        fullWidth
+                                    />
+                                </Grid>
+                                <Grid item>
+                                    <TextField id="standard-basic" 
+                                        label="In stock" 
+                                        variant="standard" 
+                                        type="number"
+                                        value={inStockQuantity}
+                                        onChange={handleChangeInStockQuantity}
+                                        required
+                                        fullWidth
+                                    />
+                                </Grid>
+                                <Grid item>
+                                    <TextField id="standard-basic" 
+                                        label="mesurement unit" 
+                                        variant="standard" 
+                                        value={measurementUnit}
+                                        onChange={handleChangeMeasurementUnit}
+                                        required
+                                        fullWidth
+                                    />
+                                </Grid>
+                                <Grid item>
+                                    <TextField id="standard-basic" 
+                                        label="price" 
+                                        variant="standard" 
+                                        type="number"
+                                        value={price}
+                                        onChange={handleChangePrice}
+                                        required
+                                        fullWidth
+                                    />
+                                </Grid>
+                                <Grid item>                   
+                                    <TextField id="standard-basic" 
+                                        label="Discount" 
+                                        type="number"
+                                        variant="standard" 
+                                        value={discount}
+                                        onChange={handleChangeDicount}
+                                        required
+                                        fullWidth
+                                    />
+                                </Grid>
+                                <Grid item>
+                                    <Button variant="contained" component="label" fullWidth>
+                                        Upload File
+                                        <input name="image" 
+                                            type="file" 
+                                            onChange={(e) => {imageSelectHandeler(e.target.files)}}
+                                            hidden
+                                            required
+                                        />
+                                    </Button>
+                                </Grid>
+                                <Grid item>
+                                    <Button fullWidth onClick={submitForm} variant="outlined" >Submit</Button>
+                                </Grid>
+                            </Grid>
+                            <Grid item xs={12} lg={6}>
+                                {imageSelectedMsg}
+                            </Grid>
+                        </Grid>
                     </Box>
                 </form>
             </Paper>
@@ -153,22 +216,6 @@ function AddProducts() {
 export default AddProducts;
 
 
-{/* <TextField id="standard-basic" 
-                    label="Standard" 
-                    variant="Select File" 
-                    name="image" 
-                    type="file" 
-                    onChange={(e) => {imageSelectHandeler(e.target.files)}}/> */}
-{/* <Button
-  variant="contained"
-  component="label"
->
-  Upload File
-  <input
-    type="file"
-    hidden
-  />
-</Button> */}
 // <input name="image" type="file" onChange={(e) => {imageSelectHandeler(e.target.files)}}/>
 // const submitForm = async () => {
 //     const response = await fetch('/api/products', {
@@ -189,30 +236,3 @@ export default AddProducts;
 //     const data = await response.data;
 //     console.log(data);
 // }
-
-// const submitForm = async () => {
-//     const formdata = new FormData();
-    // formdata.append("nameEN", nameEN);
-    // formdata.append("nameBN", nameBN);
-    // formdata.append("inStockQuantity", inStockQuantity);
-    // formdata.append("measurementUnit", measurementUnit);
-    // formdata.append("price", price);
-    // formdata.append("discount", discount);
-//     formdata.append("image", image, imgae.name);
-
-//     axios.post('/api/products', formdata).then(res => {
-//             console.log(res);
-//     })
-
-//     const data = await response.data;
-//     console.log(data);
-// }
-
-// formdata.append("productDetails", {
-//     nameEN: nameEN,
-//     nameBN: nameBN,
-//     inStockQuantity: inStockQuantity,
-//     measurementUnit: measurementUnit,
-//     price: price,
-//     discount: discount,
-// })
