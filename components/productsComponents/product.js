@@ -36,7 +36,7 @@ export default function Product(props) {
     }
     else if(PRODUCT_DISCOUNT > 0){
         offerText = (<Typography gutterBottom variant="subtitle1" component="div">
-            💕 Discount: ৳ ${PRODUCT_AGRO_PRICE * PRODUCT_DISCOUNT /100} /  ${PRODUCT_MEASUREMENT_UNIT} (${PRODUCT_DISCOUNT}%)
+            💕 Discount: ৳ {PRODUCT_AGRO_PRICE * PRODUCT_DISCOUNT /100} /  {PRODUCT_MEASUREMENT_UNIT} ({PRODUCT_DISCOUNT}%)
         </Typography>)
     }
 
@@ -71,7 +71,8 @@ export default function Product(props) {
                             disabled={!isAvailable}
                             endAdornment={<InputAdornment position="end">{PRODUCT_MEASUREMENT_UNIT}</InputAdornment>}
                             aria-describedby="outlined-weight-helper-text"
-                            focused                        
+                            focused    
+                            type="number"                    
                         />
                         <FormHelperText id="outlined-weight-helper-text">Enter amount</FormHelperText>
                     </FormControl>

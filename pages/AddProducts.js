@@ -125,13 +125,6 @@ function AddProducts() {
                                         onChange={handleChangeNameEn}
                                         required
                                         fullWidth
-                                        InputProps={{
-                                            classes: {
-                                            root: classes.root,
-                                            disabled: classes.disabled,
-                                            notchedOutline: classes.notchedOutline
-                                            }
-                                        }} 
                                     />
                                 </Grid>
                                 <Grid item>
@@ -189,7 +182,7 @@ function AddProducts() {
                                 </Grid>
                                 <Grid item>
                                     <Button variant="contained" component="label" fullWidth>
-                                        Upload File
+                                        Select a product image
                                         <input name="image" 
                                             type="file" 
                                             onChange={(e) => {imageSelectHandeler(e.target.files)}}

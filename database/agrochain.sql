@@ -32,7 +32,7 @@ CREATE TABLE `admins_details` (
   `ADMIN_ID` varchar(38) NOT NULL DEFAULT uuid(),
   `USER_ID` varchar(38) NOT NULL,
   `ADMIN_POSSITION` char(15) NOT NULL,
-  `ADMIN_SALLERY` int(11) NOT NULL
+  `ADMIN_SALLERY` int(11) NOT NULL,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -128,7 +128,7 @@ CREATE TABLE `products_details` (
   `PRODUCT_MEASUREMENT_UNIT` char(10) DEFAULT NULL,
   `PRODUCT_AGRO_PRICE` double(10,4) DEFAULT 0.0000,
   `PRODUCT_DISCOUNT` double(3,2) DEFAULT 0.00,
-  'PRODUCT_IMG' varchar(50) NOT NULL,
+  'PRODUCT_IMG' varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -140,10 +140,8 @@ CREATE TABLE `products_details` (
 CREATE TABLE `restaurents_details` (
   `RESTAURENT_ID` varchar(38) NOT NULL DEFAULT uuid(),
   `USER_ID` varchar(38) NOT NULL,
+  `RESTAURENTS_NAME` varchar(38) NOT NULL,
   `RESTAURENTS_ADDRESS` text NOT NULL,
-  `RESTAURENTS_RATING` int(11) NOT NULL,
-  `RESTAURENTS_OPENS_AT` time NOT NULL,
-  `RESTAURENTS_CLOSES_AT` time NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -178,9 +176,9 @@ CREATE TABLE `user_details` (
   `USER_ID` varchar(38) NOT NULL DEFAULT uuid(),
   `USER_NAME` varchar(30) NOT NULL,
   `USER_PASSWORD` text NOT NULL,
+  `USER_TYPE` char(15) DEFAULT 'USER',
   `USER_PHONE` text NOT NULL UNIQUE,
   `USER_EMAIL` text NOT NULL UNIQUE,
-  `USER_TYPE` char(15) DEFAULT 'USER',
   `USER_JOIN_DATE` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

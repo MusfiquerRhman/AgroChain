@@ -30,7 +30,7 @@ router.post("/", upload, (req, res) => {
             
     connection.query(sql, (err, result) => {
         if(err){
-            res.status(500);
+            res.status(500).json({result});
         }
         else {
             res.status(201).json({result});
