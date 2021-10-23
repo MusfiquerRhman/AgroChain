@@ -1,30 +1,33 @@
 import React, {useState, useEffect} from 'react';
-import useInputState from '../hooks/useInputState';
 import axios from 'axios';
+import Router from 'next/router'
 
+// Material UI components
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import Index from "../pages/index"
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
-import BorderLinearProgress from '../styles/BorderLinearProgress';
+import useInputState from '../hooks/useInputState';
 import style from "../styles/addProductStyle"
 
-function AddProducts() {
+function Registration() {
     const [name, handleChangeName, setName] = useInputState("");
-    const [businessName, handleChangeBusinessName, setBusinessName] = useInputState("");
+    const [businessName, handleChangeBusinessName, setBusnessName] = useInputState("");
     const [password, handleChangePassword, setPassword] = useInputState("");
     const [confrimPassword, handleChangeConfrimPassword, setConfrimPassword] = useInputState("");
     const [address, handleChangeAddress, setAddress] = useInputState("");
     const [phoneNo, handleChangePhoneNo, setPhoneNo] = useInputState("");
     const [email, handleChangeEmail, setEmail] = useInputState("");
 
-    const [flashMessage, setFlashMEssage] = useState("");
+    const [flashMessage, setFlashMEssage] = useState(" ");
+    const [isRegistrated, setIsRegistrated] = useState(false);
 
-    const classes = style()
+    const classes = style();
 
     const submitForm = async (e) => {
         e.preventDefault();
@@ -39,7 +42,7 @@ function AddProducts() {
 
             axios.post('/api/user/registration', formdata).then(res => {
                 if(res.status === 201){
-                    setFlashMEssage("Account Successfully created");
+                    setIsRegistrated(true);
                 }
                 else if(res.status === 205){
                     setFlashMEssage("Phone no or Email already exist! Try new one")
@@ -50,25 +53,51 @@ function AddProducts() {
             });
         }
         else {
-            setFlashMEssage("Password not matched")
+            setFlashMEssage("Passwords not matched")
         }        
     }
+
+    useEffect(() => {
+        if(isRegistrated){
+            Router.push('/login');
+        }
+    });
+
+    const Alert = React.forwardRef(function Alert(props, ref) {
+        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+    });
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+        setOpen(false);
+    };
 
     return (
         <div>
             <Paper elevation={6} > 
                 <form className={classes.form}>
+
                     <Typography variant="h3">
                         Enter your details:
                     </Typography>
-                    <Typography variant="h6">
+
+                    <Snackbar open={isRegistrated} autoHideDuration={6000} onClose={handleClose}>
+                        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                            Registration Sucessfull!
+                        </Alert>
+                    </Snackbar>
+
+                    <Typography variant="h6" className={classes.flashMessages}>
                         {flashMessage}
                     </Typography>
+
                     <Box sx={{ width: '100%' }}>
                         <Grid container item direction="column" spacing={2} xs={12}>
                             <Grid item>
                                 <TextField id="registration-name" 
-                                    label="Manager Name" 
+                                    label="Name" 
                                     variant="standard" 
                                     value={name} 
                                     onChange={handleChangeName}
@@ -78,7 +107,7 @@ function AddProducts() {
                             </Grid>
                             <Grid item>
                                 <TextField id="registration-company" 
-                                    label="Company Name" 
+                                    label="Company/Business Name" 
                                     variant="standard" 
                                     value={businessName} 
                                     onChange={handleChangeBusinessName}
@@ -138,6 +167,7 @@ function AddProducts() {
                                     value={address}
                                     onChange={handleChangeAddress}
                                     multiline = {true}
+                                    rows={4}
                                     required
                                     fullWidth
                                 />
@@ -153,4 +183,4 @@ function AddProducts() {
     )
 }
 
-export default AddProducts;
+export default Registration;

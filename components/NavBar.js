@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+//Material UI Components
 import Link from "next/link"
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -15,6 +16,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
+
 import {Search, SearchIconWrapper, StyledInputBase} from "../styles/navbarStyles";
 
 export default function NavBar() {

@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 
+//Material UI Components
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
@@ -12,6 +13,7 @@ import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import CardHeader from '@mui/material/CardHeader';
+
 import style from "../../styles/productStyle"
 
 export default function Product(props) {
@@ -19,7 +21,18 @@ export default function Product(props) {
     const handleChange = (event) => {
         setValue(event.target.value);
     };
-    const {PRODUCT_ID, ADMIN_ID, PRODUCT_NAME_EN, PRODUCT_NAME_BN, PRODUCT_IN_STOCK_QUANTITY, PRODUCT_MEASUREMENT_UNIT, PRODUCT_AGRO_PRICE, PRODUCT_DISCOUNT, PRODUCT_IMG} = props;
+
+    const {PRODUCT_ID, 
+        ADMIN_ID, 
+        PRODUCT_NAME_EN, 
+        PRODUCT_NAME_BN, 
+        PRODUCT_IN_STOCK_QUANTITY, 
+        PRODUCT_MEASUREMENT_UNIT, 
+        PRODUCT_AGRO_PRICE, 
+        PRODUCT_DISCOUNT, 
+        PRODUCT_IMG
+    } = props;
+
     const photo = `/img/${PRODUCT_IMG}`;
 
     const classes = style();
@@ -69,7 +82,11 @@ export default function Product(props) {
                             color= "secondary"
                             onChange={(e) => {handleChange(e)}}
                             disabled={!isAvailable}
-                            endAdornment={<InputAdornment position="end">{PRODUCT_MEASUREMENT_UNIT}</InputAdornment>}
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    {PRODUCT_MEASUREMENT_UNIT}
+                                </InputAdornment>
+                            }
                             aria-describedby="outlined-weight-helper-text"
                             focused    
                             type="number"                    
@@ -82,20 +99,3 @@ export default function Product(props) {
         </div>
    );
 }
-
-
-// export default function Product(props) {
-//     const {PRODUCT_ID, ADMIN_ID, PRODUCT_NAME_EN, PRODUCT_NAME_BN, PRODUCT_IN_STOCK_QUANTITY, PRODUCT_MEASUREMENT_UNIT, PRODUCT_AGRO_PRICE, PRODUCT_DISCOUNT, PRODUCT_IMG} = props;
-//     const photo = `/img/${PRODUCT_IMG}`;
-//     return (
-//         <div>
-//             <img src={photo}/>
-//             <h1>{PRODUCT_NAME_EN}</h1>
-//             <h2>{PRODUCT_NAME_BN}</h2>
-//             <p>{PRODUCT_IN_STOCK_QUANTITY}</p>
-//             <p>{PRODUCT_MEASUREMENT_UNIT}</p>
-//             <p>{PRODUCT_AGRO_PRICE}</p>
-//             <p>{PRODUCT_DISCOUNT}</p>
-//         </div>
-//     )
-// }

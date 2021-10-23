@@ -15,6 +15,9 @@ const style = makeStyles(() => ({
         width: "30vw",
         paddingTop: "3rem",
     },
+    flashMessages: {
+        color: "#DC0000"
+    }
 }));
 
 export default style;

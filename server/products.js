@@ -9,12 +9,11 @@ const fs = require('fs');
 let connection = require("../database/model");
 let upload = require("../Helpers/File")
 
-let handle = app.getRequestHandler()
-var jsonParser = bodyParser.json()
-var urlencodedParser = bodyParser.urlencoded({ extended: false })
+// let handle = app.getRequestHandler()
+// var jsonParser = bodyParser.json()
+// var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 router.post("/", upload, (req, res) => {
-    
     console.log(req.file)
     const nameEN = req.body.nameEN;
     const nameBN = req.body.nameBN;

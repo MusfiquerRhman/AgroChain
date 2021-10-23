@@ -1,9 +1,12 @@
 import '../styles/globals.css'
 import NavBar from "../components/NavBar"
-import { ThemeProvider } from '@mui/material/styles';
 import theme from "../styles/theme"
+
+// Material UI components
 import Grid from '@mui/material/Grid';
 import CssBaseline from "@mui/material/CssBaseline";
+import { ThemeProvider } from '@mui/material/styles';
+
 
 function MyApp(props) {
   const { Component, pageProps } = props;

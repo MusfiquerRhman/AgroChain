@@ -5,8 +5,6 @@ let app = next({dev});
 let handle = app.getRequestHandler()
 let bodyParser = require('body-parser');
 let path = require("path");
-let jwt = require("jsonwebtoken");
-let bcrypt = require("bcrypt");
 let PORT = process.env.PORT || 3000;
 
 app.prepare().then(() => {
@@ -36,3 +34,5 @@ app.prepare().then(() => {
         console.log("server jas started");
     })
 })
+
+

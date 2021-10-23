@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import useInputState from '../hooks/useInputState';
 import axios from 'axios';
 
+// Material UI components
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -11,6 +11,7 @@ import Grid from '@mui/material/Grid';
 
 import BorderLinearProgress from '../styles/BorderLinearProgress';
 import style from "../styles/addProductStyle"
+import useInputState from '../hooks/useInputState';
 
 function AddProducts() {
     const [nameEN, handleChangeNameEn, setNameEn] = useInputState("");
@@ -50,7 +51,7 @@ function AddProducts() {
         setInStockQuantity("");
         setMeasurementUnit("");
         setPrice("");
-        setDiscout("");
+        setDiscout(0);
         setImage("");      
     }
 
@@ -113,10 +114,22 @@ function AddProducts() {
                     <Typography variant="h3">
                         Enter product details
                     </Typography>
-                    <BorderLinearProgress value={uploadProgress} variant="determinate"/>
+
+                    <BorderLinearProgress 
+                        value={uploadProgress} 
+                        variant="determinate"
+                    />
                     <Box sx={{ width: '100%' }}>
-                        <Grid container spacing={2} direction="row" justifyContent="space-between">
-                            <Grid container item direction="column" spacing={2} xs={12} lg={6}>
+                        <Grid container 
+                            spacing={2} 
+                            direction="row" 
+                            justifyContent="space-between"
+                        >
+                            <Grid container item 
+                                direction="column" 
+                                spacing={2} 
+                                xs={12} lg={6}
+                            >
                                 <Grid item>
                                     <TextField id="standard-basic" 
                                         label="Name (English)" 
@@ -192,7 +205,12 @@ function AddProducts() {
                                     </Button>
                                 </Grid>
                                 <Grid item>
-                                    <Button fullWidth onClick={submitForm} variant="outlined" >Submit</Button>
+                                    <Button fullWidth 
+                                        onClick={submitForm} 
+                                        variant="outlined" 
+                                    >
+                                        Submit
+                                    </Button>
                                 </Grid>
                             </Grid>
                             <Grid item xs={12} lg={6}>
@@ -209,7 +227,6 @@ function AddProducts() {
 export default AddProducts;
 
 
-// <input name="image" type="file" onChange={(e) => {imageSelectHandeler(e.target.files)}}/>
 // const submitForm = async () => {
 //     const response = await fetch('/api/products', {
 //         method: 'POST',
@@ -217,12 +234,12 @@ export default AddProducts;
 //             'Content-Type': 'application/json',
 //         },
 //         body: JSON.stringify({
-            // nameEN: nameEN,
-            // nameBN: nameBN,
-            // inStockQuantity: inStockQuantity,
-            // measurementUnit: measurementUnit,
-            // price: price,
-            // discount: discount,
+//             nameEN: nameEN,
+//             nameBN: nameBN,
+//             inStockQuantity: inStockQuantity,
+//             measurementUnit: measurementUnit,
+//             price: price,
+//             discount: discount,
 //             image: image
 //         })
 //     })
