@@ -7,6 +7,26 @@ const fs = require('fs');
 
 let connection = require("../database/model");
 let upload = require("../Helpers/File");
+const { route } = require("next/dist/server/router");
+const session = require("express-session");
+
+const isLoggedIn = (req, res, next) => {
+    if(!req.session.userId){
+        res.status(403).send();
+    }
+    else {
+        next();
+    }
+}
+
+const isAdmin = (req, res, next) => {
+    if(!req.session.userId || req.session.userType !== "ADMIN"){
+        res.status(403).send();
+    }
+    else {
+        next();
+    }
+}
 
 const verifyJWT = (req, res, next) => {
     const token = req.headers["x-access-token"];
@@ -37,8 +57,8 @@ router.post("/registration", upload, async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const checkExistingUser = `SELECT USER_ID FROM user_details WHERE USER_PHONE = "${phoneNo}" || USER_EMAIL = "${email}"`;
-        connection.query(checkExistingUser, (err, result) => {
+        const checkExistingUser = `SELECT USER_ID FROM user_details WHERE USER_PHONE = ? || USER_EMAIL = ?`;
+        connection.query(checkExistingUser, [phoneNo, email],  (err, result) => {
             if(err){
                 res.status(500).send();
                 console.log(err);
@@ -48,16 +68,16 @@ router.post("/registration", upload, async (req, res) => {
             }
             else {
                 const insertUserSQL = `INSERT INTO user_details (USER_NAME, USER_PASSWORD, USER_PHONE, USER_EMAIL)` +
-                                     ` VALUES ("${name}" , "${hashedPassword}", "${phoneNo}", "${email}")`;
+                                     ` VALUES (?, ?, ?, ?)`;
 
-                connection.query(insertUserSQL, (err, result) => {
+                connection.query(insertUserSQL, [name, hashedPassword, phoneNo, email], (err, result) => {
                     if(err){
                         res.status(500).send();
                         console.log(err);
                     }
                     else {
-                        const getUserIdSQL = `SELECT USER_ID FROM user_details WHERE USER_PHONE = "${phoneNo}" && USER_EMAIL = "${email}"`
-                        connection.query(getUserIdSQL, (err, result) => {
+                        const getUserIdSQL = `SELECT USER_ID FROM user_details WHERE USER_PHONE = ? && USER_EMAIL = ?`
+                        connection.query(getUserIdSQL, [phoneNo, email], (err, result) => {
                             if(err){
                                 res.status(500).send();
                                 console.log(err);
@@ -65,9 +85,9 @@ router.post("/registration", upload, async (req, res) => {
                             else {
                                 let userid = result[0].USER_ID;
                                 const insertRestaurentSQL = `INSERT INTO restaurents_details (USER_ID, RESTAURENTS_NAME, RESTAURENTS_ADDRESS)` +
-                                                            ` VALUES ("${userid}", "${businessName}", "${address}")`
+                                                            ` VALUES (?, ?, ?)`
 
-                                connection.query(insertRestaurentSQL, (err, result) => {
+                                connection.query(insertRestaurentSQL, [userid, businessName, address], (err, result) => {
                                     if(err){
                                         res.status(500).send();
                                         console.log(err);
@@ -88,12 +108,13 @@ router.post("/registration", upload, async (req, res) => {
     }
 });
 
+
 router.post("/login",  upload, async (req, res) => {
     const userEmail = req.body.email;
     const password = req.body.password;
 
-    const sql = `SELECT * FROM user_details WHERE USER_EMAIL = "${userEmail}"`;
-    connection.query(sql, (err, users) => {
+    const sql = `SELECT * FROM user_details WHERE USER_EMAIL = ?`;
+    connection.query(sql, [userEmail], (err, users) => {
         if(err){
             res.status(500).send();
             console.log(err);
@@ -106,6 +127,8 @@ router.post("/login",  upload, async (req, res) => {
                         userId: users[0].USER_ID
                     }
                     const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: 60*60*14});
+                    req.session.userId = users[0].USER_ID;
+                    req.session.userType = users[0].USER_TYPE;
                     res.status(200).json({
                         token: token, 
                         userId: users[0].USER_ID,
@@ -125,6 +148,11 @@ router.post("/login",  upload, async (req, res) => {
             }
         }
     })
+})
+
+route.post("/logout", (req, res) => {
+    req.session.destroy();
+    res.status(200).send();
 })
 
 module.exports = router;

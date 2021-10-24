@@ -63,7 +63,7 @@ function Login() {
 
     return (
         <div>
-            <Paper elevation={6} > 
+            <Paper elevation={6}> 
                 <form className={classes.form}>
                     <Typography variant="h3">
                         Login by using Email and Password:

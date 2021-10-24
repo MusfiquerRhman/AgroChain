@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useContext } from 'react';
 
 //Material UI Components
 import Link from "next/link"
@@ -17,14 +17,20 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 
+import {UserContext} from '../ContextAPI/userContext'
 import {Search, SearchIconWrapper, StyledInputBase} from "../styles/navbarStyles";
 
 export default function NavBar() {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  const [loginPress, setLoginPress] = useState(false);
+  const [registrationPressed, setRegistrationPress] = useState(false);
+
+
+  const { userId } = useContext(UserContext);
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -35,8 +41,10 @@ export default function NavBar() {
   };
 
   const handleMenuClose = () => {
-    setAnchorEl(null);
-    handleMobileMenuClose();
+    setTimeout(() => {
+      setAnchorEl(null);
+      handleMobileMenuClose();
+    }, 100);
   };
 
   const handleMobileMenuOpen = (event) => {
@@ -60,9 +68,23 @@ export default function NavBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      {userId &&
+        <Box>
+          <MenuItem onClick={handleMenuClose}><Link href="/"><a>Profile</a></Link></MenuItem>
+          <MenuItem onClick={handleMenuClose}><Link href="/"><a>Purchase History</a></Link></MenuItem>
+          <MenuItem onClick={handleMenuClose}><Link href="/"><a>Logout</a></Link></MenuItem>
+        </Box>
+      }
+
+      {!userId &&
+      <Box>
+        <MenuItem onClick={handleMenuClose}><Link href="/login"><a>Login</a></Link></MenuItem>
+        <MenuItem onClick={handleMenuClose}><Link href="/registration"><a>Sign Up</a></Link></MenuItem>
+      </Box>
+    }
+      {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>Purchase History</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Logout</MenuItem> */}
     </Menu>
   );
 

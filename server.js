@@ -5,15 +5,30 @@ let app = next({dev});
 let handle = app.getRequestHandler()
 let bodyParser = require('body-parser');
 let path = require("path");
+const passport = require("passport");
+const session = require("express-session");
+const passport_local = require("passport-local").Strategy;
 let PORT = process.env.PORT || 3000;
 
 app.prepare().then(() => {
     let server = express();
 
+    server.use(session({
+        secret: process.env.SESSIONS_SECRET,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            secure: false,
+            maxAge: 3600000
+        }
+    }));
+
     server.use(express.static(path.join(__dirname, 'public')));
     server.use(bodyParser.json()); 
     server.use(bodyParser.urlencoded({ extended: true })); 
     server.use(express.json())
+    server.use(passport.initialize());
+    server.use(passport.session());
 
     const productRoute = require("./server/products");
     server.use("/api/products", productRoute);

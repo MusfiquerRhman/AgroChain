@@ -25,9 +25,9 @@ router.post("/", upload, (req, res) => {
 
     const sql = `INSERT INTO products_details (PRODUCT_NAME_EN, PRODUCT_NAME_BN, PRODUCT_IN_STOCK_QUANTITY,` +
                 ` PRODUCT_MEASUREMENT_UNIT, PRODUCT_AGRO_PRICE, PRODUCT_DISCOUNT, PRODUCT_IMG) VALUES ` +
-                `("${nameEN}", "${nameBN}", ${inStockQuantity}, "${measurementUnit}", ${price}, ${discount}, "${image}")`
+                `(?, ?, ?, ?, ?, ?, ?)`
             
-    connection.query(sql, (err, result) => {
+    connection.query(sql, [nameEN, nameBN, inStockQuantity, measurementUnit, price, discount, image], (err, result) => {
         if(err){
             res.status(500).json({result});
         }

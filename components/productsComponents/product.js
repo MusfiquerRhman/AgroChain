@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 
 //Material UI Components
 import CardContent from '@mui/material/CardContent';
