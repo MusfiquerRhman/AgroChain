@@ -87,8 +87,7 @@ export default function Product(props) {
                                     {PRODUCT_MEASUREMENT_UNIT}
                                 </InputAdornment>
                             }
-                            aria-describedby="outlined-weight-helper-text"
-                            focused    
+                            aria-describedby="outlined-weight-helper-text"    
                             type="number"                    
                         />
                         <FormHelperText id="outlined-weight-helper-text">Enter amount</FormHelperText>

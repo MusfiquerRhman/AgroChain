@@ -6,12 +6,12 @@ let bcrypt = require("bcrypt");
 const fs = require('fs');
 
 let connection = require("../database/model");
-let upload = require("../Helpers/File")
+let upload = require("../Helpers/File");
 
 const verifyJWT = (req, res, next) => {
     const token = req.headers["x-access-token"];
     if(!token){
-        res.status(204).send();
+        res.status(403).send();
     }
     else {
         jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
@@ -19,7 +19,7 @@ const verifyJWT = (req, res, next) => {
                 res.status(403).json("Failed to authenticate");
             }
             else {
-                req.user = user;
+                req.userId = user.userId;
                 next()
             }
         })
@@ -93,38 +93,27 @@ router.post("/login",  upload, async (req, res) => {
     const password = req.body.password;
 
     const sql = `SELECT * FROM user_details WHERE USER_EMAIL = "${userEmail}"`;
-    connection.query(sql, (err, result) => {
+    connection.query(sql, (err, users) => {
         if(err){
             res.status(500).send();
             console.log(err);
         }
         else {
-            console.log(result);
-            if(result.length > 0){
-                if(bcrypt.compareSync(password, result[0].USER_PASSWORD)){
+            console.log(users);
+            if(users.length > 0){
+                if(bcrypt.compareSync(password, users[0].USER_PASSWORD)){
                     const user = {
-                        userId: result[0].USER_ID,
+                        userId: users[0].USER_ID
                     }
-                    const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: 1800});
-                    const refreshToken = jwt.sign(user, process.env.REFRASH_TOKEN_SECRET);
-
-                    const sql = `UPDATE user_details SET USER_REFRESH_TOKEN = "${refreshToken}" WHERE USER_ID = "${result[0].USER_ID}"`;
-                    connection.query(sql, (err, result) => {
-                        if(err){
-                            res.status(500).send();
-                        }
-                        else {
-                            res.status(200).json({
-                                token: token, 
-                                refreshToken: refreshToken,
-                                userName: result[0].USER_NAME,
-                                userId: result[0].USER_ID,
-                                userEmail: result[0].USER_EMAIL,
-                                userPhone: result[0].USER_PHONE,
-                                userType: result[0].USER_TYPE,
-                                userJoinDate: result[0].USER_JOIN_DATE
-                            })
-                        }
+                    const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: 60*60*14});
+                    res.status(200).json({
+                        token: token, 
+                        userId: users[0].USER_ID,
+                        userName: users[0].USER_NAME,
+                        userEmail: users[0].USER_EMAIL,
+                        userPhone: users[0].USER_PHONE,
+                        userType: users[0].USER_TYPE,
+                        userJoinDate: users[0].USER_JOIN_DATE
                     })
                 } 
                 else {
@@ -136,42 +125,6 @@ router.post("/login",  upload, async (req, res) => {
             }
         }
     })
-})
-
-function generateAccessToken(user) {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15s' })
-}
-
-router.get("/token", (req, res) => {
-    const refreshToken = req.body.refreshToken;
-    const userId = req.body.userId;
-    if(refreshToken == null){
-        res.status(401).send();
-    }
-    else {
-        let sql = `SELECT USER_REFRESH_TOKEN FROM user_details WHERE USER_ID = "${userId}"`
-        connection.query(sql, (err, result) => {
-            if(err){
-                res.status(500).send()
-            }
-            else if(refreshToken !== result[0].USER_REFRESH_TOKEN){
-                res.status(500).send();
-            }
-            else {
-                jwt.verify(refreshToken, process.env.REFRASH_TOKEN_SECRET, (err, user) => {
-                    if(err){
-                        res.status(403).send();
-                    }
-                    else{
-                        const accessToken = generateAccessToken({
-                            userId: user.userId
-                        });
-                        res.json({accessToken: accessToken});
-                    }
-                })
-            }
-        })
-    }
 })
 
 module.exports = router;

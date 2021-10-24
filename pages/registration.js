@@ -24,7 +24,7 @@ function Registration() {
     const [phoneNo, handleChangePhoneNo, setPhoneNo] = useInputState("");
     const [email, handleChangeEmail, setEmail] = useInputState("");
 
-    const [flashMessage, setFlashMEssage] = useState(" ");
+    const [flashMessage, setFlashMEssage] = useState("");
     const [isRegistrated, setIsRegistrated] = useState(false);
 
     const classes = style();

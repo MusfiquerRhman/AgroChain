@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import axios from 'axios';
 import Router from 'next/router'
 
@@ -10,18 +10,18 @@ import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 
-
+import {UserContext} from '../ContextAPI/userContext'
 import useInputState from '../hooks/useInputState';
 import style from "../styles/addProductStyle"
 
 function Login() {
-    const [name, handleChangeName, setName] = useInputState("");
     const [password, handleChangePassword, setPassword] = useInputState("");
-    const [phoneNo, handleChangePhoneNo, setPhoneNo] = useInputState("");
     const [email, handleChangeEmail, setEmail] = useInputState("");
 
     const [flashMessage, setFlashMEssage] = useState(" ");
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    const { setUserId, setUserName, setUserPhoneNo, setUserEmail, setUsertype, setUserJoinDate } = useContext(UserContext);
 
     const classes = style();
 
@@ -34,6 +34,13 @@ function Login() {
         axios.post('/api/user/login', formdata).then(res => {
             console.log(res);
             if(res.status === 200){
+                localStorage.setItem("token", res.data.token);
+                setUserId(res.data.userId)
+                setUserName(res.data.userName) 
+                setUserPhoneNo(res.data.userPhone) 
+                setUserEmail(res.data.userEmail)
+                setUsertype(res.data.userType)
+                setUserJoinDate(res.data.userJoinDate)
                 setIsAuthenticated(true);
             }
             else if(res.status === 204){
@@ -58,9 +65,8 @@ function Login() {
         <div>
             <Paper elevation={6} > 
                 <form className={classes.form}>
-
                     <Typography variant="h3">
-                        Enter Email and Password:
+                        Login by using Email and Password:
                     </Typography>
 
                     <Typography variant="h6" className={classes.flashMessages}>
