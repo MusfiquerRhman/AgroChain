@@ -18,106 +18,111 @@ import Link from "next/link"
 
 const drawerWidth = 240;
 
-export default function AdminDrawer({handleDrawerClose, open, setOpen}){
-  const theme = useTheme();
-
+export default function AdminDrawer({handleDrawerClose, open}){
+  	const theme = useTheme();
     return(
-        <Drawer
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: drawerWidth,
-            boxSizing: 'border-box',
-          },
-        }}
-        variant="persistent"
-        anchor="left"
-        open={open}
-      >
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose} color="primary">
-            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <List>
-            <ListItem button key={"Manage Producs"}>
-              <ListItemIcon>
-                <ConstructionIcon color="primary"/>
-              </ListItemIcon>
-                <Typography
-                  variant="h6"
-                  component="div"
-                  sx={{ display: { xs: 'none', sm: 'block' } }}
-                >
-                  <Link href="/AddProducts" ><a>Products</a></Link>
-                </Typography>
-            </ListItem>
-            <ListItem button key={"Manage Producs"}>
-              <ListItemIcon>
-                <ShopIcon color="primary"/>
-              </ListItemIcon>
-                <Typography
-                  variant="h6"
-                  component="div"
-                  sx={{ display: { xs: 'none', sm: 'block' } }}
-                >
-                  <Link href="/AddProducts" ><a>Orders</a></Link>
-                </Typography>
-            </ListItem>
-            <ListItem button key={"Manage Producs"}>
-              <ListItemIcon>
-                <HistoryIcon color="primary"/>
-              </ListItemIcon>
-                <Typography
-                  variant="h6"
-                  component="div"
-                  sx={{ display: { xs: 'none', sm: 'block' } }}
-                >
-                  <Link href="/AddProducts" ><a>History</a></Link>
-                </Typography>
-            </ListItem>
-            <ListItem button key={"Manage Producs"}>
-              <ListItemIcon>
-                <PeopleAltIcon color="primary"/>
-              </ListItemIcon>
-                <Typography
-                  variant="h6"
-                  component="div"
-                  sx={{ display: { xs: 'none', sm: 'block' } }}
-                >
-                  <Link href="/AddProducts" ><a>Customers</a></Link>
-                </Typography>
-            </ListItem>
-        </List>
-        <Divider />
-        <List>
-          <ListItem button key={"Manage Producs"}>
-              <ListItemIcon>
-                <DateRangeIcon color="primary"/>
-              </ListItemIcon>
-                <Typography
-                  variant="h6"
-                  component="div"
-                  sx={{ display: { xs: 'none', sm: 'block' } }}
-                >
-                  <Link href="/AddProducts" ><a>Seasons</a></Link>
-                </Typography>
-            </ListItem>
-            <ListItem button key={"Manage Producs"}>
-              <ListItemIcon>
-                <LoyaltyIcon color="primary"/>
-              </ListItemIcon>
-                <Typography
-                  variant="h6"
-                  component="div"
-                  sx={{ display: { xs: 'none', sm: 'block' } }}
-                >
-                  <Link href="/AddProducts" ><a>Tags</a></Link>
-                </Typography>
-            </ListItem>
-        </List>
+      	<Drawer
+			sx={{
+				width: drawerWidth,
+				flexShrink: 0,
+				'& .MuiDrawer-paper': {
+					width: drawerWidth,
+					boxSizing: 'border-box',
+				},
+			}}
+			variant="persistent"
+			anchor="left"
+			open={open}
+      	>
+			<DrawerHeader>
+				<IconButton onClick={handleDrawerClose} color="primary">
+					{theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+				</IconButton>
+			</DrawerHeader>
+			<Divider />
+
+			<List>
+				<ListItem button key={"Producs"}>
+					<ListItemIcon>
+						<ConstructionIcon color="primary"/>
+					</ListItemIcon>
+					<Typography
+						variant="h6"
+						component="div"
+						sx={{ display: { sm: 'block' } }}
+					>
+					<Link href="/Avater/AddProducts" ><a>Products</a></Link>
+					</Typography>
+				</ListItem>
+
+				<ListItem button key={"orders"}>
+					<ListItemIcon>
+						<ShopIcon color="primary"/>
+					</ListItemIcon>
+					<Typography
+						variant="h6"
+						component="div"
+						sx={{ display: { sm: 'block' } }}
+					>
+					<Link href="/" ><a>Orders</a></Link>
+					</Typography>
+				</ListItem>
+
+				<ListItem button key={"history"}>
+					<ListItemIcon>
+						<HistoryIcon color="primary"/>
+					</ListItemIcon>
+					<Typography
+						variant="h6"
+						component="div"
+						sx={{ display: { sm: 'block' } }}
+						>
+					<Link href="/" ><a>History</a></Link>
+					</Typography>
+				</ListItem>
+
+				<ListItem button key={"customer"}>
+					<ListItemIcon>
+						<PeopleAltIcon color="primary"/>
+					</ListItemIcon>
+					<Typography
+						variant="h6"
+						component="div"
+						sx={{ display: { sm: 'block' } }}
+						>
+					<Link href="/" ><a>Customers</a></Link>
+					</Typography>
+				</ListItem>
+			</List>
+			<Divider />
+
+			<List>
+				<ListItem button key={"seasons"}>
+					<ListItemIcon>
+						<DateRangeIcon color="primary"/>
+					</ListItemIcon>
+					<Typography
+						variant="h6"
+						component="div"
+						sx={{ display: { sm: 'block' } }}
+					>
+						<Link href="/" ><a>Seasons</a></Link>
+					</Typography>
+				</ListItem>
+				
+				<ListItem button key={"tag"}>
+					<ListItemIcon>
+						<LoyaltyIcon color="primary"/>
+					</ListItemIcon>
+					<Typography
+						variant="h6"
+						component="div"
+						sx={{ display: { sm: 'block' } }}
+						>
+						<Link href="/" ><a>Tags</a></Link>
+					</Typography>
+				</ListItem>
+			</List>
       </Drawer>
     )
 }

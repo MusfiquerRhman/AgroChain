@@ -1,8 +1,6 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import Router from 'next/router'
-
-//Material UI Components
 import Link from "next/link"
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -21,249 +19,257 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import AdminDrawer from "./navbarComponents/AdminDrawer";
 import {Search, SearchIconWrapper, StyledInputBase} from "../styles/navbarStyles";
 
-export default function NavBar() {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
-  const isMenuOpen = Boolean(anchorEl);
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-  const [open, setOpen] = React.useState(false);
-  const [loggedin, setLoggedIn] = useState(false);
+export default function NavBar(){
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
+    const isMenuOpen = Boolean(anchorEl);
+    const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+    const [open, setOpen] = React.useState(false);
+    const [loggedin, setLoggedIn] = useState(false);
+    const [isAdmin, setAdmin] = useState(false);
 
-  useEffect(() => {
-    const loggedInUser = localStorage.getItem("user");
-    console.log(loggedInUser)
-    if(loggedInUser){
-      setLoggedIn(true);
+    useEffect(() => {
+        const loggedInUser = localStorage.getItem("userId");
+        if(loggedInUser){
+            setLoggedIn(true);
+            const userType = localStorage.getItem("userType");
+            if(userType === "AVATER"){
+                setAdmin(true);
+            }
+        }
+    })
+
+    const handleProfileMenuOpen = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMobileMenuClose = () => {
+        setMobileMoreAnchorEl(null);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+        handleMobileMenuClose();
+    };
+
+    const handleLogOut = () => {
+        setAnchorEl(null);
+        handleMobileMenuClose();
+
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("userName");
+        localStorage.removeItem("userPhone");
+        localStorage.removeItem("userType");
+        localStorage.removeItem("userJoinDate");
+
+        axios.post('/api/user/logout').then(res => {
+            Router.reload('/');
+        }).catch(err => {
+            console.log(err.message);
+        });
     }
-  })
 
-  const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+    const handleMobileMenuOpen = (event) => {
+        setMobileMoreAnchorEl(event.currentTarget);
+    };
 
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
-  };
+    const handleDrawerOpen = () => {
+        setOpen(true);
+    };
 
-  const handleMenuClose = () => {
-      setAnchorEl(null);
-      handleMobileMenuClose();
-  };
+    const handleDrawerClose = () => {
+        setOpen(false);
+    };
 
-  const handleLogOut = () => {
-    setAnchorEl(null);
-    handleMobileMenuClose();
+    const menuId = 'primary-search-account-menu';
+    const renderMenu = (
+        <Menu
+            anchorEl={anchorEl}
+            anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+            }}
+            id={menuId}
+            keepMounted
+            transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+            }}
+            open={isMenuOpen}
+            onClose={handleMenuClose}
+        >
+        {loggedin &&
+            <Box>
+            <MenuItem onClick={handleMenuClose}><Link href="/"><a>Profile</a></Link></MenuItem>
+            <MenuItem onClick={handleMenuClose}><Link href="/"><a>Purchase History</a></Link></MenuItem>
+            <MenuItem onClick={handleLogOut}><Link href="/"><a>Logout</a></Link></MenuItem>
+            </Box>
+        }
 
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
+        {!loggedin &&
+            <Box>
+            <MenuItem onClick={handleMenuClose}><Link href="/login"><a>Login</a></Link></MenuItem>
+            <MenuItem onClick={handleMenuClose}><Link href="/registration"><a>Sign Up</a></Link></MenuItem>
+            </Box>
+        }        
+        </Menu>
+    );
 
-    axios.post('/api/user/logout').then(res => {
-      Router.reload('/');
-    }).catch(err => {
-        console.log(err.message);
-    });
-  }
+    const mobileMenuId = 'primary-search-account-menu-mobile';
+    const renderMobileMenu = (
+        <Menu
+            anchorEl={mobileMoreAnchorEl}
+            anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+            }}
+            id={mobileMenuId}
+            keepMounted
+            transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+            }}
+            open={isMobileMenuOpen}
+            onClose={handleMobileMenuClose}
+        >
+            <MenuItem>
+                <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+                <Badge badgeContent={4} color="error">
+                    <ShoppingCartIcon />
+                </Badge>
+                </IconButton>
+                <p>Cart</p>
+            </MenuItem>
+            <MenuItem>
+                <IconButton
+                    size="large"
+                    aria-label="show 17 new notifications"
+                    color="inherit"
+                >
+                <Badge badgeContent={17} color="error">
+                    <NotificationsIcon />
+                </Badge>
+                </IconButton>
+                <p>Notifications</p>
+            </MenuItem>
+            <MenuItem onClick={handleProfileMenuOpen}>
+                <IconButton
+                    size="large"
+                    aria-label="account of current user"
+                    aria-controls="primary-search-account-menu"
+                    aria-haspopup="true"
+                    color="inherit"
+                >
+                <AccountCircle />
+                </IconButton>
+                <p>Profile</p>
+            </MenuItem>
+        </Menu>
+    );
 
-  const handleMobileMenuOpen = (event) => {
-    setMobileMoreAnchorEl(event.currentTarget);
-  };
+    let accountButtonText = "Sign In"
+    if(loggedin){
+        accountButtonText= "Account"
+    }
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
+    return (
+        <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static">
+            <Toolbar>
+                {isAdmin && 
+                    <IconButton
+                        color="inherit"
+                        aria-label="open drawer"
+                        onClick={handleDrawerOpen}
+                        edge="start"
+                        sx={{ mr: 2 }}
+                        >
+                        <MenuIcon />
+                    </IconButton>
+                }  
+                <Typography
+                    variant="h6"
+                    component="div"
+                    sx={{ display: { xs: 'none', sm: 'block' } }}
+                >
+                    <Link href="/"><a><i>AgroChain</i></a></Link>
+                </Typography>
 
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
+                <Search>
+                    <SearchIconWrapper>
+                        <SearchIcon />
+                    </SearchIconWrapper>
+                    <StyledInputBase
+                        placeholder="Search…"
+                        inputProps={{ 'aria-label': 'search' }}
+                    />
+                </Search>
 
+                <Box sx={{ flexGrow: 1 }} />
 
-  const menuId = 'primary-search-account-menu';
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      {loggedin &&
-        <Box>
-          <MenuItem onClick={handleMenuClose}><Link href="/"><a>Profile</a></Link></MenuItem>
-          <MenuItem onClick={handleMenuClose}><Link href="/"><a>Purchase History</a></Link></MenuItem>
-          <MenuItem onClick={handleLogOut}><Link href="/"><a>Logout</a></Link></MenuItem>
+                <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+                    <IconButton size="large" color="inherit">
+                        <Typography
+                            variant="h6"
+                            component="div"
+                            sx={{ display: { xs: 'none', sm: 'block' } }}
+                        >
+                        <Badge badgeContent={4} color="error">
+                            <Link href="/" ><a>Cart</a></Link>
+                        </Badge>
+                        </Typography>
+                    </IconButton>
+
+                    <IconButton size="large" color="inherit">
+                        <Typography
+                            variant="h6"
+                            component="div"
+                            sx={{ display: { xs: 'none', sm: 'block' } }}
+                        >
+                        <Badge badgeContent={17} color="error">
+                            <Link href="/" ><a>Notifications</a></Link>
+                        </Badge>
+                        </Typography>
+                    </IconButton>
+
+                    <IconButton
+                        size="large"
+                        edge="end"
+                        aria-label="account of current user"
+                        aria-controls={menuId}
+                        aria-haspopup="true"
+                        onClick={handleProfileMenuOpen}
+                        color="inherit"
+                    >
+                        <Typography
+                            variant="h6"
+                            component="div"
+                            sx={{ display: { xs: 'none', sm: 'block' } }}
+                        >
+                        {accountButtonText}
+                        </Typography>
+                    </IconButton>
+                </Box>
+
+                <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+                    <IconButton
+                        size="large"
+                        aria-label="show more"
+                        aria-controls={mobileMenuId}
+                        aria-haspopup="true"
+                        onClick={handleMobileMenuOpen}
+                        color="inherit"
+                    >
+                        <MoreIcon />
+                    </IconButton>
+                </Box>
+            </Toolbar>
+        </AppBar>
+        <AdminDrawer handleDrawerClose={handleDrawerClose} open={open}/>
+        {renderMobileMenu}
+        {renderMenu}
         </Box>
-      }
-
-      {!loggedin &&
-      <Box>
-        <MenuItem onClick={handleMenuClose}><Link href="/login"><a>Login</a></Link></MenuItem>
-        <MenuItem onClick={handleMenuClose}><Link href="/registration"><a>Sign Up</a></Link></MenuItem>
-      </Box>
-    }        
-
-      {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Purchase History</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Logout</MenuItem> */}
-    </Menu>
-  );
-
-  const mobileMenuId = 'primary-search-account-menu-mobile';
-  const renderMobileMenu = (
-    <Menu
-      anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      id={mobileMenuId}
-      keepMounted
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-    >
-      <MenuItem>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="error">
-            <ShoppingCartIcon />
-          </Badge>
-        </IconButton>
-        <p>Cart</p>
-      </MenuItem>
-      <MenuItem>
-        <IconButton
-          size="large"
-          aria-label="show 17 new notifications"
-          color="inherit"
-        >
-          <Badge badgeContent={17} color="error">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          size="large"
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        <p>Profile</p>
-      </MenuItem>
-    </Menu>
-  );
-
-  let accountButtonText = "Sign In"
-  if(loggedin){
-    accountButtonText= "Account"
-  }
-
-  return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar>
-        {loggedin && 1}  
-        <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{ mr: 2, ...(open && { display: 'none' }) }}
-          >
-            <MenuIcon />
-        </IconButton>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ display: { xs: 'none', sm: 'block' } }}
-          >
-            <Link href="/"><a><i>AgroChain</i></a></Link>
-          </Typography>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search>
-          <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-
-          <IconButton size="large" color="inherit">
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{ display: { xs: 'none', sm: 'block' } }}
-              >
-              <Badge badgeContent={4} color="error">
-                <Link href="/AddProducts" ><a>Cart</a></Link>
-              </Badge>
-              </Typography>
-          </IconButton>
-
-          <IconButton size="large" color="inherit">
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{ display: { xs: 'none', sm: 'block' } }}
-              >
-              <Badge badgeContent={17} color="error">
-                <Link href="/AddProducts" ><a>Notifications</a></Link>
-              </Badge>
-              </Typography>
-          </IconButton>
-          <IconButton
-            size="large"
-            edge="end"
-            aria-label="account of current user"
-            aria-controls={menuId}
-            aria-haspopup="true"
-            onClick={handleProfileMenuOpen}
-            color="inherit"
-          >
-            <Typography
-              variant="h6"
-              component="div"
-              sx={{ display: { xs: 'none', sm: 'block' } }}
-            >
-              {accountButtonText}
-            </Typography>
-            </IconButton>
-          </Box>
-          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <MoreIcon />
-            </IconButton>
-          </Box>
-        </Toolbar>
-      </AppBar>
-      <AdminDrawer handleDrawerClose={handleDrawerClose} open={open} setOpen={setOpen}/>
-      {renderMobileMenu}
-      {renderMenu}
-    </Box>
-  );
+    );
 }
-

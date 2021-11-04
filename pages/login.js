@@ -15,11 +15,9 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 
 function Login() {
-    const [password, handleChangePassword, setPassword] = useInputState("");
-    const [email, handleChangeEmail, setEmail] = useInputState("");
-
-
-    const [flashMessage, setFlashMEssage] = useState(" ");
+    const [password, handleChangePassword] = useInputState("");
+    const [email, handleChangeEmail] = useInputState("");
+    const [flashMessage, setFlashMEssage] = useState("");
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     const classes = style();
@@ -33,7 +31,13 @@ function Login() {
             console.log(res);
             if(res.status === 200){
                 localStorage.setItem("token", res.data.token);
-                localStorage.setItem("user", res.data);
+                localStorage.setItem("userId", res.data.userId);
+                localStorage.setItem("userEmail", res.data.userEmail);
+                localStorage.setItem("userName", res.data.userName);
+                localStorage.setItem("userPhone", res.data.userPhone);
+                localStorage.setItem("userType", res.data.userType);
+                localStorage.setItem("userJoinDate", res.data.userJoinDate);
+
                 setIsAuthenticated(true);
             }
             else if(res.status === 204){

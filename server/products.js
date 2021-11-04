@@ -21,13 +21,14 @@ router.post("/", upload, (req, res) => {
     const measurementUnit = req.body.measurementUnit;
     const price = req.body.price;
     const discount = req.body.discount;
+    const addedBy = req.body.addedBy;
     const image = req.file.filename;
 
-    const sql = `INSERT INTO products_details (PRODUCT_NAME_EN, PRODUCT_NAME_BN, PRODUCT_IN_STOCK_QUANTITY,` +
+    const sql = `INSERT INTO products_details (ADMIN_ID, PRODUCT_NAME_EN, PRODUCT_NAME_BN, PRODUCT_IN_STOCK_QUANTITY,` +
                 ` PRODUCT_MEASUREMENT_UNIT, PRODUCT_AGRO_PRICE, PRODUCT_DISCOUNT, PRODUCT_IMG) VALUES ` +
-                `(?, ?, ?, ?, ?, ?, ?)`
+                `(?, ?, ?, ?, ?, ?, ?, ?)`
             
-    connection.query(sql, [nameEN, nameBN, inStockQuantity, measurementUnit, price, discount, image], (err, result) => {
+    connection.query(sql, [addedBy, nameEN, nameBN, inStockQuantity, measurementUnit, price, discount, image], (err, result) => {
         if(err){
             res.status(500).json({result});
         }
