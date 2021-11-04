@@ -10,7 +10,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 
 import BorderLinearProgress from '../styles/BorderLinearProgress';
-import style from "../styles/addProductStyle"
+import style from "../styles/formStyle"
 import useInputState from '../hooks/useInputState';
 
 function AddProducts() {

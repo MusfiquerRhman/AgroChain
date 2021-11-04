@@ -43,9 +43,21 @@ router.get("/", (req, res) => {
     connection.query(sql, (err, data) => {
         if(err){
             console.error(err);
-            app.render(req, res, '/');
         } else {
             res.status(200).json(data)
+        }
+    })
+})
+
+
+router.get("/:id", (req, res) => {
+    var id = req.params.id;
+    let sql = `SELECT * FROM products_details WHERE PRODUCT_ID = ?`;
+    connection.query(sql, [id], (err, data) => {
+        if(err){
+            console.error(err);
+        } else {
+            res.status(200).json({data})
         }
     })
 })

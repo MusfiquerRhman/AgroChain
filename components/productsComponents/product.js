@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import Router from 'next/router'
 
 //Material UI Components
 import CardContent from '@mui/material/CardContent';
@@ -13,6 +14,7 @@ import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import CardHeader from '@mui/material/CardHeader';
+import CardActionArea from '@mui/material/CardActionArea';
 
 import style from "../../styles/productStyle"
 
@@ -56,23 +58,25 @@ export default function Product(props) {
     return (
         <div className = {classes.card}>
             <Paper elevation={6}>
-                <CardHeader
-                    title={`🥗 ${PRODUCT_NAME_EN}`}
-                    subheader={`${PRODUCT_NAME_BN} - ৳ ${PRODUCT_AGRO_PRICE} / ${PRODUCT_MEASUREMENT_UNIT}`}
-                />
+                <CardActionArea onClick={() => Router.push(`/products/${PRODUCT_ID}`)}>
+                    <CardHeader
+                        title={`🥗 ${PRODUCT_NAME_EN}`}
+                        subheader={`${PRODUCT_NAME_BN} - ৳ ${PRODUCT_AGRO_PRICE} / ${PRODUCT_MEASUREMENT_UNIT}`}
+                    />
 
-                <CardMedia
-                    component="img"
-                    alt="green iguana"
-                    height="140"
-                    image={photo}
-                />
+                    <CardMedia
+                        component="img"
+                        alt="green iguana"
+                        height="120"
+                        image={photo}
+                    />
 
-                <CardContent>
-                    <Typography gutterBottom variant="subtitle1" component="div">
-                        <ListItemText primary={offerText} />
-                    </Typography>
-                </CardContent>
+                    <CardContent>
+                        <Typography gutterBottom variant="subtitle1" component="div">
+                            <ListItemText primary={offerText} />
+                        </Typography>
+                    </CardContent>
+                </CardActionArea>
 
                 <CardActions>
                     <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined" focused>

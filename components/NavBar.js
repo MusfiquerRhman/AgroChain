@@ -1,4 +1,6 @@
-import React, { useState, useContext } from 'react';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import Router from 'next/router'
 
 //Material UI Components
 import Link from "next/link"
@@ -16,8 +18,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
-
-import {UserContext} from '../ContextAPI/userContext'
+import AdminDrawer from "./navbarComponents/AdminDrawer";
 import {Search, SearchIconWrapper, StyledInputBase} from "../styles/navbarStyles";
 
 export default function NavBar() {
@@ -25,12 +26,16 @@ export default function NavBar() {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const [open, setOpen] = React.useState(false);
+  const [loggedin, setLoggedIn] = useState(false);
 
-  const [loginPress, setLoginPress] = useState(false);
-  const [registrationPressed, setRegistrationPress] = useState(false);
-
-
-  const { userId } = useContext(UserContext);
+  useEffect(() => {
+    const loggedInUser = localStorage.getItem("user");
+    console.log(loggedInUser)
+    if(loggedInUser){
+      setLoggedIn(true);
+    }
+  })
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -41,15 +46,36 @@ export default function NavBar() {
   };
 
   const handleMenuClose = () => {
-    setTimeout(() => {
       setAnchorEl(null);
       handleMobileMenuClose();
-    }, 100);
   };
+
+  const handleLogOut = () => {
+    setAnchorEl(null);
+    handleMobileMenuClose();
+
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+
+    axios.post('/api/user/logout').then(res => {
+      Router.reload('/');
+    }).catch(err => {
+        console.log(err.message);
+    });
+  }
 
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
+
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+
 
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
@@ -68,20 +94,21 @@ export default function NavBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      {userId &&
+      {loggedin &&
         <Box>
           <MenuItem onClick={handleMenuClose}><Link href="/"><a>Profile</a></Link></MenuItem>
           <MenuItem onClick={handleMenuClose}><Link href="/"><a>Purchase History</a></Link></MenuItem>
-          <MenuItem onClick={handleMenuClose}><Link href="/"><a>Logout</a></Link></MenuItem>
+          <MenuItem onClick={handleLogOut}><Link href="/"><a>Logout</a></Link></MenuItem>
         </Box>
       }
 
-      {!userId &&
+      {!loggedin &&
       <Box>
         <MenuItem onClick={handleMenuClose}><Link href="/login"><a>Login</a></Link></MenuItem>
         <MenuItem onClick={handleMenuClose}><Link href="/registration"><a>Sign Up</a></Link></MenuItem>
       </Box>
-    }
+    }        
+
       {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>Purchase History</MenuItem>
       <MenuItem onClick={handleMenuClose}>Logout</MenuItem> */}
@@ -140,19 +167,25 @@ export default function NavBar() {
     </Menu>
   );
 
+  let accountButtonText = "Sign In"
+  if(loggedin){
+    accountButtonText= "Account"
+  }
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
+        {loggedin && 1}  
+        <IconButton
             color="inherit"
             aria-label="open drawer"
-            sx={{ mr: 2 }}
+            onClick={handleDrawerOpen}
+            edge="start"
+            sx={{ mr: 2, ...(open && { display: 'none' }) }}
           >
             <MenuIcon />
-          </IconButton>
+        </IconButton>
           <Typography
             variant="h6"
             component="div"
@@ -178,40 +211,41 @@ export default function NavBar() {
                 component="div"
                 sx={{ display: { xs: 'none', sm: 'block' } }}
               >
-                <Link href="/AddProducts" ><a>Add products</a></Link>
+              <Badge badgeContent={4} color="error">
+                <Link href="/AddProducts" ><a>Cart</a></Link>
+              </Badge>
               </Typography>
           </IconButton>
 
-          <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={4} color="error">
-                <ShoppingCartIcon />
+          <IconButton size="large" color="inherit">
+              <Typography
+                variant="h6"
+                component="div"
+                sx={{ display: { xs: 'none', sm: 'block' } }}
+              >
+              <Badge badgeContent={17} color="error">
+                <Link href="/AddProducts" ><a>Notifications</a></Link>
               </Badge>
+              </Typography>
           </IconButton>
-
           <IconButton
             size="large"
-            aria-label="show 17 new notifications"
+            edge="end"
+            aria-label="account of current user"
+            aria-controls={menuId}
+            aria-haspopup="true"
+            onClick={handleProfileMenuOpen}
             color="inherit"
           >
-            <Badge badgeContent={17} color="error">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ display: { xs: 'none', sm: 'block' } }}
             >
-              <AccountCircle />
+              {accountButtonText}
+            </Typography>
             </IconButton>
-
           </Box>
-
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -223,42 +257,13 @@ export default function NavBar() {
             >
               <MoreIcon />
             </IconButton>
-
           </Box>
         </Toolbar>
       </AppBar>
+      <AdminDrawer handleDrawerClose={handleDrawerClose} open={open} setOpen={setOpen}/>
       {renderMobileMenu}
       {renderMenu}
     </Box>
   );
 }
 
-
-// import AppBar from '@mui/material/AppBar';
-// import Toolbar from '@mui/material/Toolbar';
-// import Typography from '@mui/material/Typography';
-// import Link from "next/link"
-// import Grid from '@mui/material/Grid';
-// import styles from "../styles/navbarStyles";
-
-// const NavBar = () => {
-//     const classes = styles();
-//     return (
-//         <AppBar position="static"> 
-//             <Toolbar>
-//                 <Typography variant="h5">
-//                     <Link href="/"><a><i>AgroChain</i></a></Link>
-//                 </Typography>
-//                 <Typography>
-//                     <Grid container direction="row" justifyContent="flex-end">
-//                         <Grid item>
-//                             <Link href="/AddProducts"><a>Add products</a></Link>
-//                         </Grid>
-//                     </Grid>
-//                 </Typography>
-//             </Toolbar>
-//         </AppBar>
-//     )
-// }
-
-// export default NavBar;

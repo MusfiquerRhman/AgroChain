@@ -7,7 +7,6 @@ const fs = require('fs');
 
 let connection = require("../database/model");
 let upload = require("../Helpers/File");
-const { route } = require("next/dist/server/router");
 const session = require("express-session");
 
 const isLoggedIn = (req, res, next) => {
@@ -76,28 +75,33 @@ router.post("/registration", upload, async (req, res) => {
                         console.log(err);
                     }
                     else {
-                        const getUserIdSQL = `SELECT USER_ID FROM user_details WHERE USER_PHONE = ? && USER_EMAIL = ?`
-                        connection.query(getUserIdSQL, [phoneNo, email], (err, result) => {
-                            if(err){
-                                res.status(500).send();
-                                console.log(err);
-                            }
-                            else {
-                                let userid = result[0].USER_ID;
-                                const insertRestaurentSQL = `INSERT INTO restaurents_details (USER_ID, RESTAURENTS_NAME, RESTAURENTS_ADDRESS)` +
-                                                            ` VALUES (?, ?, ?)`
-
-                                connection.query(insertRestaurentSQL, [userid, businessName, address], (err, result) => {
-                                    if(err){
-                                        res.status(500).send();
-                                        console.log(err);
-                                    }
-                                    else {
-                                        res.status(201).send({result});                          
-                                    }
-                                })
-                            }
-                        })
+                        if(typeof businessName === undefined){
+                            res.status(201).json({result}); 
+                        } 
+                        else {
+                            const getUserIdSQL = `SELECT USER_ID FROM user_details WHERE USER_PHONE = ? && USER_EMAIL = ?`
+                            connection.query(getUserIdSQL, [phoneNo, email], (err, result) => {
+                                if(err){
+                                    res.status(500).send();
+                                    console.log(err);
+                                }
+                                else {
+                                    let userid = result[0].USER_ID;
+                                    const insertRestaurentSQL = `INSERT INTO restaurents_details (USER_ID, RESTAURENTS_NAME, RESTAURENTS_ADDRESS)` +
+                                                                ` VALUES (?, ?, ?)`
+    
+                                    connection.query(insertRestaurentSQL, [userid, businessName, address], (err, result) => {
+                                        if(err){
+                                            res.status(500).send();
+                                            console.log(err);
+                                        }
+                                        else {
+                                            res.status(201).json({result});                          
+                                        }
+                                    })
+                                }
+                            })
+                        }
                     }
                 })
             } 
@@ -150,7 +154,7 @@ router.post("/login",  upload, async (req, res) => {
     })
 })
 
-route.post("/logout", (req, res) => {
+router.post("/logout", (req, res) => {
     req.session.destroy();
     res.status(200).send();
 })

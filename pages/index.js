@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import React from 'react';
 import ProductsList from '../components/productsComponents/ProductsList'
 
 export default function Home({products}) {
@@ -22,7 +23,7 @@ export default function Home({products}) {
 }
 
 Home.getInitialProps = async () => {
-  const response = await fetch('http://localhost:3000/api/products', )
+  const response = await fetch("http://localhost:3000/api/products")
   let data = await response.json();
   return {products: data}
 }

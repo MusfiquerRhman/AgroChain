@@ -6,7 +6,6 @@ import theme from "../styles/theme"
 import Grid from '@mui/material/Grid';
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from '@mui/material/styles';
-import { UserProvider } from '../ContextAPI/userContext'
 import { FlashMessageProvider } from '../ContextAPI/flashMessageContext'
 
 
@@ -15,7 +14,6 @@ function MyApp(props) {
   return (
     <div>
       <ThemeProvider theme={theme}>
-        <UserProvider>
           <FlashMessageProvider>
             <CssBaseline />
             <Grid container direction="column">
@@ -27,7 +25,6 @@ function MyApp(props) {
               </Grid>
             </Grid>
           </FlashMessageProvider>
-        </UserProvider>
       </ThemeProvider>
     </div>
   )
@@ -45,3 +42,11 @@ export default MyApp
 //     // TODO
 //   })
 // }
+
+
+  // localStorage.setItem("userId", res.data.userId)
+  // localStorage.setItem("userName", res.data.userName) 
+  // localStorage.setItem("userPhone", res.data.userPhone) 
+  // localStorage.setItem("userEmail", res.data.userEmail)
+  // localStorage.setItem("userType", res.data.userType)
+  // localStorage.setItem("userData", res.data.userJoinDate)

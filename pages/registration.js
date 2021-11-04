@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import Router from 'next/router'
+import Link from "next/link"
 
 // Material UI components
 import Typography from '@mui/material/Typography';
@@ -9,11 +10,9 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
 
 import useInputState from '../hooks/useInputState';
-import style from "../styles/addProductStyle"
+import style from "../styles/formStyle"
 
 function Registration() {
     const [name, handleChangeName, setName] = useInputState("");
@@ -63,31 +62,15 @@ function Registration() {
         }
     });
 
-    const Alert = React.forwardRef(function Alert(props, ref) {
-        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-    });
-
-    const handleClose = (event, reason) => {
-        if (reason === 'clickaway') {
-          return;
-        }
-        setOpen(false);
-    };
 
     return (
         <div>
-            <Paper elevation={6} > 
+            <Paper elevation={6} className={classes.formBox} > 
                 <form className={classes.form}>
 
                     <Typography variant="h3">
-                        Enter your details:
+                        New Registration:
                     </Typography>
-
-                    <Snackbar open={isRegistrated} autoHideDuration={6000} onClose={handleClose}>
-                        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                            Registration Sucessfull!
-                        </Alert>
-                    </Snackbar>
 
                     <Typography variant="h6" className={classes.flashMessages}>
                         {flashMessage}
@@ -111,7 +94,6 @@ function Registration() {
                                     variant="standard" 
                                     value={businessName} 
                                     onChange={handleChangeBusinessName}
-                                    required
                                     fullWidth
                                 />
                             </Grid>
@@ -168,12 +150,17 @@ function Registration() {
                                     onChange={handleChangeAddress}
                                     multiline = {true}
                                     rows={4}
-                                    required
                                     fullWidth
                                 />
                             </Grid>
                             <Grid item>
                                 <Button fullWidth onClick={submitForm} variant="contained" >Sign Up</Button>
+                            </Grid>
+                            <Grid item>
+                                <Typography variant="subtitle1">
+                                    Already have an account?
+                                </Typography>
+                                <Button fullWidth variant="contained" ><Link href="/login"><a>Login</a></Link></Button>
                             </Grid>
                         </Grid>
                     </Box>

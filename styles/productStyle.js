@@ -5,7 +5,7 @@ const style = makeStyles(() => ({
         border: "1px solid #00B3A6"
     },
     card: {
-        boxShadow: "0 0 1.2rem #006B63",
+        //boxShadow: "0 0 1.5rem #006B63",
     }
 }))
 
