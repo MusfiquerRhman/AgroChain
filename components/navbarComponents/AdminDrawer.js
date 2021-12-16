@@ -2,6 +2,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ConstructionIcon from '@mui/icons-material/Construction';
 import ShopIcon from '@mui/icons-material/Shop';
 import HistoryIcon from '@mui/icons-material/History';
+import TimelineIcon from '@mui/icons-material/Timeline';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import LoyaltyIcon from '@mui/icons-material/Loyalty';
@@ -118,11 +119,29 @@ export default function AdminDrawer({handleDrawerClose, open}){
 						variant="h6"
 						component="div"
 						sx={{ display: { sm: 'block' } }}
-						>
+					>
 						<Link href="/" ><a>Tags</a></Link>
 					</Typography>
 				</ListItem>
 			</List>
-      </Drawer>
+
+			<Divider />
+			<List>
+				<ListItem button key={"whatsnew"}>
+					<ListItemIcon>
+						<TimelineIcon color="primary"/>
+					</ListItemIcon>
+					<Typography
+						variant="h6"
+						component="div"
+						sx={{ display: { sm: 'block' } }}
+					>
+						<Link href="/" ><a>What's New?</a></Link>
+					</Typography>
+				</ListItem>
+			</List>
+
+
+      	</Drawer>
     )
 }

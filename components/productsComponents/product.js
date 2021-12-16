@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Router from 'next/router'
+import axios from 'axios';
+import style from "../../styles/productStyle"
 
-//Material UI Components
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
@@ -15,12 +16,31 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import CardHeader from '@mui/material/CardHeader';
 import CardActionArea from '@mui/material/CardActionArea';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
-import style from "../../styles/productStyle"
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 export default function Product(props) {
     const [value, setValue] = useState("")
-    const [totalPrice, setTotalPrice] = useState("Add to cart")
+    const [totalPrice, setTotalPrice] = useState("Enter Amount")
+    const [isUpdated, setIsUpdated] = useState(false)
+    const [flashMessage, setFlashMEssage] = useState("");
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const loggedInUser = localStorage.getItem("userId");
+        if(loggedInUser){
+            setIsLoggedIn(true);
+        }
+        else {
+            setTotalPrice("Log in first!")
+        }
+    })
+
     const handleChange = (event) => {
         setValue(event.target.value);
         if(event.target.value !== ""){
@@ -42,44 +62,83 @@ export default function Product(props) {
     } = props;
 
     const photo = `/img/${PRODUCT_IMG}`;
-
     const classes = style();
 
+    const submitForm = async (e) => {
+        const formdata = new FormData();
+        formdata.append("userId", localStorage.getItem("userId"));
+        formdata.append("productId", PRODUCT_ID);
+        formdata.append("quantity", value);
+
+        if(value > 0){
+            axios.post('/api/products/cart', formdata).then(res => {
+                if(res.status === 201){
+                    setIsUpdated(true);
+                    setFlashMEssage("Product Added to cart");
+                }
+            }).catch(err => {
+                setFlashMEssage("Server Error! please try again later");
+                console.log(err.message);
+            });
+        }
+        else {
+            setFlashMEssage("Enter an amount")
+        }
+    }
+
+    const handleCloseSnackbar = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setIsUpdated(false);
+    };
+
     let isAvailable = true;
-    let offerText= (<Typography gutterBottom variant="subtitle1" component="div">
-        😅 No offer available
-    </Typography>)
+    let offerText = "😅 No offer available"
+
     if(PRODUCT_IN_STOCK_QUANTITY <= 0){
-        offerText = (<Typography gutterBottom variant="subtitle1" component="div"> 
-            😥 Currently not in stock
-        </Typography>)
+        offerText = "😥 Currently not in stock"
         isAvailable = false;
     }
     else if(PRODUCT_DISCOUNT > 0){
-        offerText = (<Typography gutterBottom variant="subtitle1" component="div">
-            💕 Discount: ৳ {PRODUCT_AGRO_PRICE * PRODUCT_DISCOUNT /100} /  {PRODUCT_MEASUREMENT_UNIT} ({PRODUCT_DISCOUNT}%)
-        </Typography>)
+        let price = PRODUCT_AGRO_PRICE * PRODUCT_DISCOUNT / 100;
+        offerText = `💕 Discount: ৳ ${price} /  ${PRODUCT_MEASUREMENT_UNIT} (${PRODUCT_DISCOUNT}%)`
     }
 
     return (
-        <div className = {classes.card}>
+        <div>
+            <Snackbar 
+                open={isUpdated} 
+                autoHideDuration={6000} 
+                onClose={handleCloseSnackbar}
+            >
+                <Alert 
+                    onClose={handleCloseSnackbar} 
+                    severity={isUpdated ? "success" : "warning"} 
+                    sx={{ width: '100%' }}
+                >
+                    {flashMessage}
+                </Alert>
+            </Snackbar>
             <Paper elevation={6}>
                 <CardActionArea onClick={() => Router.push(`/products/${PRODUCT_ID}`)}>
                     <CardHeader
                         title={`🥗 ${PRODUCT_NAME_EN}`}
                         subheader={`${PRODUCT_NAME_BN} - ৳ ${PRODUCT_AGRO_PRICE} / ${PRODUCT_MEASUREMENT_UNIT}`}
                     />
-
                     <CardMedia
                         component="img"
                         alt="green iguana"
                         height="120"
                         image={photo}
                     />
-
-                    <CardContent>
-                        <Typography gutterBottom variant="subtitle1" component="div">
-                            <ListItemText primary={offerText} />
+                    <CardContent  className={classes.offer}>
+                        <Typography 
+                            gutterBottom 
+                            variant="subtitle1" 
+                            component="div"
+                        >
+                            <ListItemText primary={offerText}/>
                         </Typography>
                     </CardContent>
                 </CardActionArea>
@@ -101,12 +160,17 @@ export default function Product(props) {
                             type="number"                    
                         />
                         <FormHelperText id="outlined-weight-helper-text">
-                            <Typography gutterBottom variant="body1" component="span">
-                                {totalPrice}
-                            </Typography>
+                            {totalPrice}
                         </FormHelperText>
                     </FormControl>
-                    <Button size="small" variant="outlined" disabled={!isAvailable}>Add to cart</Button>
+                    <Button 
+                        size="small" 
+                        variant="outlined"
+                        disabled={!isAvailable || !isLoggedIn}
+                        onClick={submitForm}
+                    >
+                        Add to cart
+                    </Button>
                 </CardActions>
             </Paper>
         </div>

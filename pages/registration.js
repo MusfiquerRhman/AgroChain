@@ -62,7 +62,6 @@ function Registration() {
         }
     });
 
-
     return (
         <div>
             <Paper elevation={6} className={classes.formBox} > 

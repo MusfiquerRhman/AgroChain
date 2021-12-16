@@ -18,11 +18,20 @@ function AddProducts() {
     const [measurementUnit, handleChangeMeasurementUnit, setMeasurementUnit] = useInputState("");
     const [price, handleChangePrice, setPrice] = useInputState("");
     const [discount, handleChangeDicount, setDiscout] = useInputState(0);
+    const [isAdmin, setIsAdmin] = useState(false);
 
     const [image, setImage] = useState("");
     const [uploadProgress, setUploadProgress] = useState(0);
     const [status, setstatus] = useState(0);
     const [displayImage, setDisplayImage] = useState("");
+
+    useEffect(() => {
+        const type = localStorage.getItem("userType");
+        if(type === "AVATER"){
+            setIsAdmin(true);
+        }
+    }, [isAdmin])
+
 
     const classes = style()
 
@@ -105,120 +114,126 @@ function AddProducts() {
         imageSelectedMsg = <img src= {displayImage} className={classes.image}/>
     }
 
+
     return (
         <div>
             {flashMessage}
-            <Paper elevation={6} > 
-                <form className={classes.form}>
-                    <Typography variant="h3">
-                        Enter product details
-                    </Typography>
+            {isAdmin && 
+                (<Paper elevation={6} > 
+                    <form className={classes.form}>
+                        <Typography variant="h3">
+                            Enter product details
+                        </Typography>
 
-                    <BorderLinearProgress 
-                        value={uploadProgress} 
-                        variant="determinate"
-                    />
-                    <Box sx={{ width: '100%' }}>
-                        <Grid container 
-                            spacing={2} 
-                            direction="row" 
-                            justifyContent="space-between"
-                        >
-                            <Grid container item 
-                                direction="column" 
+                        <BorderLinearProgress 
+                            value={uploadProgress} 
+                            variant="determinate"
+                        />
+                        <Box sx={{ width: '100%' }}>
+                            <Grid container 
                                 spacing={2} 
-                                xs={12} lg={6}
+                                direction="row" 
+                                justifyContent="space-between"
                             >
-                                <Grid item>
-                                    <TextField id="standard-basic" 
-                                        label="Name (English)" 
-                                        variant="standard" 
-                                        value={nameEN} 
-                                        onChange={handleChangeNameEn}
-                                        required
-                                        fullWidth
-                                    />
-                                </Grid>
-                                <Grid item>
-                                    <TextField id="standard-basic" 
-                                        label="Name (bn)" 
-                                        variant="standard" 
-                                        value={nameBN} 
-                                        onChange={handleChangeNameBn}
-                                        required
-                                        fullWidth
-                                    />
-                                </Grid>
-                                <Grid item>
-                                    <TextField id="standard-basic" 
-                                        label="In stock" 
-                                        variant="standard" 
-                                        type="number"
-                                        value={inStockQuantity}
-                                        onChange={handleChangeInStockQuantity}
-                                        required
-                                        fullWidth
-                                    />
-                                </Grid>
-                                <Grid item>
-                                    <TextField id="standard-basic" 
-                                        label="mesurement unit" 
-                                        variant="standard" 
-                                        value={measurementUnit}
-                                        onChange={handleChangeMeasurementUnit}
-                                        required
-                                        fullWidth
-                                    />
-                                </Grid>
-                                <Grid item>
-                                    <TextField id="standard-basic" 
-                                        label="price" 
-                                        variant="standard" 
-                                        type="number"
-                                        value={price}
-                                        onChange={handleChangePrice}
-                                        required
-                                        fullWidth
-                                    />
-                                </Grid>
-                                <Grid item>                   
-                                    <TextField id="standard-basic" 
-                                        label="Discount" 
-                                        type="number"
-                                        variant="standard" 
-                                        value={discount}
-                                        onChange={handleChangeDicount}
-                                        required
-                                        fullWidth
-                                    />
-                                </Grid>
-                                <Grid item>
-                                    <Button variant="contained" component="label" fullWidth>
-                                        Select a product image
-                                        <input name="image" 
-                                            type="file" 
-                                            onChange={(e) => {imageSelectHandeler(e.target.files)}}
-                                            hidden
+                                <Grid container item 
+                                    direction="column" 
+                                    spacing={2} 
+                                    xs={12} lg={6}
+                                >
+                                    <Grid item>
+                                        <TextField id="standard-basic" 
+                                            label="Name (English)" 
+                                            variant="standard" 
+                                            value={nameEN} 
+                                            onChange={handleChangeNameEn}
                                             required
+                                            fullWidth
                                         />
-                                    </Button>
+                                    </Grid>
+                                    <Grid item>
+                                        <TextField id="standard-basic" 
+                                            label="Name (bn)" 
+                                            variant="standard" 
+                                            value={nameBN} 
+                                            onChange={handleChangeNameBn}
+                                            required
+                                            fullWidth
+                                        />
+                                    </Grid>
+                                    <Grid item>
+                                        <TextField id="standard-basic" 
+                                            label="In stock" 
+                                            variant="standard" 
+                                            type="number"
+                                            value={inStockQuantity}
+                                            onChange={handleChangeInStockQuantity}
+                                            required
+                                            fullWidth
+                                        />
+                                    </Grid>
+                                    <Grid item>
+                                        <TextField id="standard-basic" 
+                                            label="mesurement unit" 
+                                            variant="standard" 
+                                            value={measurementUnit}
+                                            onChange={handleChangeMeasurementUnit}
+                                            required
+                                            fullWidth
+                                        />
+                                    </Grid>
+                                    <Grid item>
+                                        <TextField id="standard-basic" 
+                                            label="price" 
+                                            variant="standard" 
+                                            type="number"
+                                            value={price}
+                                            onChange={handleChangePrice}
+                                            required
+                                            fullWidth
+                                        />
+                                    </Grid>
+                                    <Grid item>                   
+                                        <TextField id="standard-basic" 
+                                            label="Discount" 
+                                            type="number"
+                                            variant="standard" 
+                                            value={discount}
+                                            onChange={handleChangeDicount}
+                                            required
+                                            fullWidth
+                                        />
+                                    </Grid>
+                                    <Grid item>
+                                        <Button variant="contained" component="label" fullWidth>
+                                            Select a product image
+                                            <input name="image" 
+                                                type="file" 
+                                                onChange={(e) => {imageSelectHandeler(e.target.files)}}
+                                                hidden
+                                                required
+                                            />
+                                        </Button>
+                                    </Grid>
+                                    <Grid item>
+                                        <Button fullWidth 
+                                            onClick={submitForm} 
+                                            variant="outlined" 
+                                        >
+                                            Submit
+                                        </Button>
+                                    </Grid>
                                 </Grid>
-                                <Grid item>
-                                    <Button fullWidth 
-                                        onClick={submitForm} 
-                                        variant="outlined" 
-                                    >
-                                        Submit
-                                    </Button>
+                                <Grid item xs={12} lg={6}>
+                                    {imageSelectedMsg}
                                 </Grid>
                             </Grid>
-                            <Grid item xs={12} lg={6}>
-                                {imageSelectedMsg}
-                            </Grid>
-                        </Grid>
-                    </Box>
-                </form>
-            </Paper>
+                        </Box>
+                    </form>
+                </Paper>)
+            }
+            {!isAdmin && 
+                <h1 style={{textAlign: "center"}}>404 | This page could not be found.</h1>
+            }
         </div>
     )
 }

@@ -100,6 +100,14 @@ CREATE TABLE `orders` (
   `ORDER_DATE` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+
+-- @block
+CREATE TABLE cart_details (
+	CART_ID varchar(38) NOT NULL DEFAULT uuid(),
+  USER_ID varchar(38) NOT NULL,
+  PRODUCT_ID varchar(38) NOT NULL,
+  CART_QUANTITY INT(11) NOT NULL
+)
 -- --------------------------------------------------------
 
 --
@@ -142,6 +150,8 @@ CREATE TABLE `restaurents_details` (
   `USER_ID` varchar(38) NOT NULL,
   `RESTAURENTS_NAME` varchar(38) NOT NULL,
   `RESTAURENTS_ADDRESS` text NOT NULL,
+  `RESTAURENTS_ABOUT` text NOT NULL,
+  `RESTAURENTS_WEBSITE` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------

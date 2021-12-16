@@ -1,12 +1,9 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import Router from 'next/router'
 import Link from "next/link"
-
 import useInputState from '../hooks/useInputState';
 import style from "../styles/formStyle"
-
-// Material UI components
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -20,6 +17,7 @@ function Login() {
     const [flashMessage, setFlashMEssage] = useState("");
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+
     const classes = style();
 
     const submitForm = async (e) => {
@@ -28,7 +26,6 @@ function Login() {
         formdata.append("password", password);
 
         axios.post('/api/user/login', formdata).then(res => {
-            console.log(res);
             if(res.status === 200){
                 localStorage.setItem("token", res.data.token);
                 localStorage.setItem("userId", res.data.userId);
