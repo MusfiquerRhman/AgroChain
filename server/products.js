@@ -38,7 +38,6 @@ router.post("/", upload, (req, res) => {
     })   
 })
 
-
 router.get("/", (req, res) => {
     let sql = `SELECT * FROM products_details`;
     connection.query(sql, (err, data) => {
@@ -49,7 +48,6 @@ router.get("/", (req, res) => {
         }
     })
 })
-
 
 router.get("/:id", (req, res) => {
     var id = req.params.id;
@@ -98,5 +96,95 @@ router.post("/cart", upload, (req, res) => {
     })
 })
 
+router.post("/cart/update/:id", upload, (req, res) => {
+    const cartId = req.params.id;
+    const quantity = req.body.quantity;
+    let sql = "UPDATE cart_details SET CART_QUANTITY = ? WHERE CART_ID = ?";
+    connection.query(sql, [quantity, cartId], (err, results) => {
+        if(err){
+            res.status(500);
+        }
+        else {
+            res.status(200).json(results);
+        }
+    })
+})
+
+router.get("/cart/delete/:id", upload, (req, res) => {
+    const cartId = req.params.id;
+    let sql = `DELETE FROM cart_details WHERE CART_ID = ?`;
+    connection.query(sql, [cartId], (err, results) => {
+        if(err){
+            res.status(500);
+        }
+        else {
+            res.status(200);
+        }
+    })
+})
+
+router.post("/cart/submit/:id", upload, (req, res) => {
+    const userId = req.params.id;
+    let sql = `SELECT R.RESTAURENT_ID, P.PRODUCT_ID, C.CART_QUANTITY, P.PRODUCT_DISCOUNT
+                FROM cart_details as C 
+                JOIN products_details as P 
+                    ON P.PRODUCT_ID = C.PRODUCT_ID 
+                JOIN restaurents_details as R
+                    ON R.USER_ID = C.USER_ID
+                WHERE C.USER_ID = ?`
+
+    connection.query(sql, [userId], (err, details) => {
+        if(err){
+            res.status(500);
+        }
+        else {
+            let sql = `INSERT INTO orders (RESRESTAURENT_ID) VALUES ('${details[0].RESTAURENT_ID}');`
+
+            connection.query(sql, (err, result) => {
+                if(err){
+                    console.log(err)
+                    res.status(500);
+                }
+                else {
+                    let sql = `SELECT ORDER_ID FROM orders WHERE RESRESTAURENT_ID = '${details[0].RESTAURENT_ID}'  ORDER BY ORDER_DATE DESC LIMIT 1`;
+                    
+                    connection.query(sql, (err, data) => {
+                        if(err){
+                            console.log(err)
+                            res.status(500);
+                        }
+                        else {
+                            let orderId = data[0].ORDER_ID;
+                            let sql = `INSERT INTO orders_map (ORDER_ID, PRODUCT_ID, ORDER_QUANTITY, ORDER_DISCOUNT) VALUES`;
+    
+                            for(let i = 0; i < details.length; i++){
+                                sql += ` ('${orderId}', '${details[i].PRODUCT_ID}', ${details[i].CART_QUANTITY}, ${details[i].PRODUCT_DISCOUNT}),`;
+                            }
+                            sql = sql.slice(0, -1) + ';';
+    
+                            connection.query(sql, (err, output) => {
+                                if(err){
+                                    console.log(err)
+                                    res.status(500);
+                                }
+                                else {
+                                    sql = `DELETE FROM cart_details WHERE USER_ID = '${userId}';`
+                                    connection.query(sql, (err, output) => {
+                                        if(err){
+                                            res.status(500);
+                                        }
+                                        else {
+                                            res.status(200).json(output);
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+        }
+    })
+});
 
 module.exports = router;

@@ -7,7 +7,7 @@ export default function Cart() {
 
     useEffect(() => {
         const userid = localStorage.getItem("userId");
-        axios.get(`http://localhost:3000/api/products/cart/${userid}`).then(res => {
+        axios.get(`/api/products/cart/${userid}`).then(res => {
             if(res.status === 200){
                 let items = []
                 res.data.forEach(element => {
@@ -19,6 +19,6 @@ export default function Cart() {
     }, [products])
 
     return(
-        <Cartlist products={products}/>
+        <Cartlist products={products}  key={products.CART_ID}/>
     )
 }

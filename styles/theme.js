@@ -29,8 +29,8 @@ const theme = createTheme({
             icon: "#FFFFFF"
         },
         action: {
-            disabledBackground: '#888888',
-            disabled: '#888888'
+            disabledBackground: '#AAAAAA',
+            disabled: '#000000'
         }
     },
 });

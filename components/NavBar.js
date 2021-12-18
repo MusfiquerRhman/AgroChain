@@ -105,16 +105,16 @@ export default function NavBar(){
         >
         {loggedin &&
             <Box>
-            <MenuItem onClick={handleMenuClose}><Link href="/"><a>Profile</a></Link></MenuItem>
-            <MenuItem onClick={handleMenuClose}><Link href="/"><a>Purchase History</a></Link></MenuItem>
-            <MenuItem onClick={handleLogOut}><Link href="/"><a>Logout</a></Link></MenuItem>
+                <MenuItem onClick={handleMenuClose}><Link href="/"><a>Profile</a></Link></MenuItem>
+                <MenuItem onClick={handleMenuClose}><Link href="/"><a>Purchase History</a></Link></MenuItem>
+                <MenuItem onClick={handleLogOut}><Link href="/"><a>Logout</a></Link></MenuItem>
             </Box>
         }
 
         {!loggedin &&
             <Box>
-            <MenuItem onClick={handleMenuClose}><Link href="/login"><a>Login</a></Link></MenuItem>
-            <MenuItem onClick={handleMenuClose}><Link href="/registration"><a>Sign Up</a></Link></MenuItem>
+                <MenuItem onClick={handleMenuClose}><Link href="/login"><a>Login</a></Link></MenuItem>
+                <MenuItem onClick={handleMenuClose}><Link href="/registration"><a>Sign Up</a></Link></MenuItem>
             </Box>
         }        
         </Menu>

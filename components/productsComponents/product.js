@@ -71,10 +71,11 @@ export default function Product(props) {
         formdata.append("quantity", value);
 
         if(value > 0){
+            setIsUpdated(false);
             axios.post('/api/products/cart', formdata).then(res => {
                 if(res.status === 201){
                     setIsUpdated(true);
-                    setFlashMEssage("Product Added to cart");
+                    setFlashMEssage(`${PRODUCT_NAME_EN} (${PRODUCT_NAME_BN}) Added to cart`);
                 }
             }).catch(err => {
                 setFlashMEssage("Server Error! please try again later");
