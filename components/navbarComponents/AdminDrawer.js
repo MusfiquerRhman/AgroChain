@@ -13,8 +13,11 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import {DrawerHeader} from "../../styles/navbarStyles";
 import IconButton from '@mui/material/IconButton';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import Link from "next/link"
 
 const drawerWidth = 240;
@@ -45,6 +48,35 @@ export default function AdminDrawer({handleDrawerClose, open}){
 			<List>
 				<ListItem button key={"Producs"}>
 					<ListItemIcon>
+						<DashboardIcon color="primary"/>
+					</ListItemIcon>
+					<Typography
+						variant="h6"
+						component="div"
+						sx={{ display: { sm: 'block' } }}
+					>
+					<Link href="/" ><a>Dashboard</a></Link>
+					</Typography>
+				</ListItem>
+			</List>
+			<Divider />
+
+			<List>
+				<ListItem button key={"AddProducs"}>
+					<ListItemIcon>
+						<AddShoppingCartIcon color="primary"/>
+					</ListItemIcon>
+					<Typography
+						variant="h6"
+						component="div"
+						sx={{ display: { sm: 'block' } }}
+					>
+					<Link href="/Avater/AddProducts" ><a>Add Products</a></Link>
+					</Typography>
+				</ListItem>
+
+				<ListItem button key={"Producs"}>
+					<ListItemIcon>
 						<ConstructionIcon color="primary"/>
 					</ListItemIcon>
 					<Typography
@@ -52,10 +84,13 @@ export default function AdminDrawer({handleDrawerClose, open}){
 						component="div"
 						sx={{ display: { sm: 'block' } }}
 					>
-					<Link href="/Avater/AddProducts" ><a>Products</a></Link>
+					<Link href="/" ><a>Manage Products</a></Link>
 					</Typography>
 				</ListItem>
+			</List>
+			<Divider />
 
+			<List>
 				<ListItem button key={"orders"}>
 					<ListItemIcon>
 						<ShopIcon color="primary"/>
@@ -79,6 +114,22 @@ export default function AdminDrawer({handleDrawerClose, open}){
 						sx={{ display: { sm: 'block' } }}
 						>
 					<Link href="/" ><a>History</a></Link>
+					</Typography>
+				</ListItem>
+			</List>
+			<Divider />
+
+			<List>
+				<ListItem button key={"Employees"}>
+					<ListItemIcon>
+						<AdminPanelSettingsIcon color="primary"/>
+					</ListItemIcon>
+					<Typography
+						variant="h6"
+						component="div"
+						sx={{ display: { sm: 'block' } }}
+						>
+					<Link href="/" ><a>Employees</a></Link>
 					</Typography>
 				</ListItem>
 
@@ -140,7 +191,6 @@ export default function AdminDrawer({handleDrawerClose, open}){
 					</Typography>
 				</ListItem>
 			</List>
-
 
       	</Drawer>
     )

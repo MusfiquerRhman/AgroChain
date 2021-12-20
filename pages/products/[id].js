@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import style from "../../styles/productDetailsStyle"
 
@@ -25,10 +25,22 @@ const Alert = React.forwardRef(function Alert(props, ref) {
   
 function ProductDetails(props) {
     const [value, setValue] = useState("")
-    const [isUpdated, setIsUpdated] = useState(false)
+    const [isSnakebarOpen, setIsSnakebarOpen] = useState(false)
     const [flashMessage, setFlashMEssage] = useState("");
-    const [totalPrice, setTotalPrice] = useState("Add to cart")
+    const [snakeBarType, setSnakeBarType] = useState("success");
+    const [totalPrice, setTotalPrice] = useState("Add to cart");
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const classes = style()
+
+    useEffect(() => {
+        const loggedInUser = localStorage.getItem("userId");
+        if(loggedInUser){
+            setIsLoggedIn(true);
+        }
+        else {
+            setTotalPrice("Log in first!")
+        }
+    })
 
     const {PRODUCT_ID, 
         ADMIN_ID, 
@@ -56,24 +68,32 @@ function ProductDetails(props) {
         if (reason === 'clickaway') {
             return;
         }
-        setIsUpdated(false);
+        setIsSnakebarOpen(false);
     };
 
     const submitForm = async (e) => {
-        const formdata = new FormData();
-        formdata.append("userId", localStorage.getItem("userId"));
-        formdata.append("productId", PRODUCT_ID);
-        formdata.append("quantity", value);
-
-        axios.post('/api/products/cart', formdata).then(res => {
-            if(res.status === 201){
-                setIsUpdated(true);
-                setFlashMEssage("Product Added to cart");
-            }
-        }).catch(err => {
-            setFlashMEssage("Server Error! please try again later");
-            console.log(err.message);
-        });
+        if(value > 0) {
+            const formdata = new FormData();
+            formdata.append("userId", localStorage.getItem("userId"));
+            formdata.append("productId", PRODUCT_ID);
+            formdata.append("quantity", value);
+    
+            axios.post('/api/products/cart', formdata).then(res => {
+                if(res.status === 201){
+                    setIsSnakebarOpen(true);
+                    setSnakeBarType("success")
+                    setFlashMEssage("Product Added to cart");
+                }
+            }).catch(err => {
+                setFlashMEssage("Server Error! please try again later");
+                console.log(err.message);
+            });
+        }
+        else {
+            setIsSnakebarOpen(true);
+            setSnakeBarType("error")
+            setFlashMEssage("Enter a valid amount");
+        }
     }
 
     let isAvailable = true;
@@ -103,13 +123,13 @@ function ProductDetails(props) {
     return (
         <div>
             <Snackbar 
-                open={isUpdated} 
+                open={isSnakebarOpen} 
                 autoHideDuration={6000} 
                 onClose={handleCloseSnackbar}
             >
                 <Alert 
                     onClose={handleCloseSnackbar} 
-                    severity={isUpdated ? "success" : "warning"} 
+                    severity={snakeBarType} 
                     sx={{ width: '100%' }}
                 >
                     {flashMessage}
@@ -167,7 +187,7 @@ function ProductDetails(props) {
                                                     value={value}
                                                     color= "secondary"
                                                     onChange={(e) => {handleChange(e)}}
-                                                    disabled={!isAvailable}
+                                                    disabled={!isAvailable || !isLoggedIn}
                                                     endAdornment={
                                                         <InputAdornment position="end">
                                                             {PRODUCT_MEASUREMENT_UNIT}
@@ -194,7 +214,7 @@ function ProductDetails(props) {
                                             <Button 
                                                 size="large" 
                                                 variant="outlined" 
-                                                disabled={!isAvailable}
+                                                disabled={!isAvailable || !isLoggedIn}
                                                 onClick={submitForm}
                                             >
                                                 Add to cart

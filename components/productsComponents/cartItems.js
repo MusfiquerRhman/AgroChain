@@ -131,33 +131,32 @@ export default function Product(props) {
 
             <Dialog open={openEditPopUp} onClose={handleClose}>
                 <DialogTitle>{PRODUCT_NAME_EN} ({PRODUCT_NAME_BN})</DialogTitle>
-                <DialogContent>
-                <DialogContentText>
-                    Current amount: {cartQuantity}, Enter new amount:
-                </DialogContentText>
-                <TextField
-                    autoFocus
-                    margin="dense"
-                    id="amount"
-                    label="Amount"
-                    type="number"
-                    InputProps={{
-                        inputProps: { 
-                            min: 1
-                        }
-                    }}
-                    fullWidth
-                    variant="standard"
-                    value={quantity} 
-                    onChange={handleChangeQuantity}
-                />
+                    <DialogContent>
+                        <DialogContentText>
+                            Current amount: {cartQuantity}, Enter new amount:
+                        </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="amount"
+                        label="Amount"
+                        type="number"
+                        InputProps={{
+                            inputProps: { 
+                                min: 1
+                            }
+                        }}
+                        fullWidth
+                        variant="standard"
+                        value={quantity} 
+                        onChange={handleChangeQuantity}
+                    />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
                     <Button onClick={updateForm}>Done</Button>
                 </DialogActions>
             </Dialog>
-
 
             <Dialog
                 open={deleteOpen}
@@ -169,15 +168,15 @@ export default function Product(props) {
                     Are you sure you want to delete?
                 </DialogTitle>
                 <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                    {PRODUCT_NAME_EN} ({PRODUCT_NAME_BN})
-                </DialogContentText>
+                    <DialogContentText id="alert-dialog-description">
+                        {PRODUCT_NAME_EN} ({PRODUCT_NAME_BN})
+                    </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                <Button onClick={handleCloseDelete}>Cancle</Button>
-                <Button onClick={deleteForm} autoFocus color="error">
-                    Delete
-                </Button>
+                    <Button onClick={handleCloseDelete}>Cancle</Button>
+                    <Button onClick={deleteForm} autoFocus color="error">
+                        Delete
+                    </Button>
                 </DialogActions>
             </Dialog>
 

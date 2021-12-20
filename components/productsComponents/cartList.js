@@ -52,7 +52,7 @@ export default function CartList({products}) {
 
     return (
         <div>
-            <Snackbar open={snakeBarOpen} autoHideDuration={3000} onClose={handleCloseSnakeBar}>
+            <Snackbar open={snakeBarOpen} autoHideDuration={6000} onClose={handleCloseSnakeBar}>
                 <Alert onClose={handleCloseSnakeBar} severity={snakeBarType} sx={{ width: '100%' }}>
                     {snakeMessage}
                 </Alert>

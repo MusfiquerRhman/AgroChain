@@ -13,7 +13,43 @@ var jsonParser = bodyParser.json()
 // let handle = app.getRequestHandler()
 // var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
-router.post("/", upload, (req, res) => {
+const isLoggedIn = (req, res, next) => {
+    if(!req.session.userId){
+        res.status(403).send();
+    }
+    else {
+        next();
+    }
+}
+
+const isAdmin = (req, res, next) => {
+    if(!req.session.userId || req.session.userType !== "ADMIN"){
+        res.status(403).send();
+    }
+    else {
+        next();
+    }
+}
+
+const verifyJWT = (req, res, next) => {
+    const token = req.headers["x-access-token"];
+    if(!token){
+        res.status(403).send();
+    }
+    else {
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+            if(err){
+                res.status(403).json("Failed to authenticate");
+            }
+            else {
+                req.userId = user.userId;
+                next()
+            }
+        })
+    }
+}
+
+router.post("/", isAdmin,  upload, (req, res) => {
     console.log(req.file)
     const nameEN = req.body.nameEN;
     const nameBN = req.body.nameBN;
@@ -61,7 +97,7 @@ router.get("/:id", (req, res) => {
     })
 })
 
-router.get("/cart/:id", (req, res) => {
+router.get("/cart/:id", isLoggedIn,  (req, res) => {
     const userId = req.params.id;
     let sql = `SELECT C.CART_ID, C.CART_QUANTITY, P.PRODUCT_NAME_EN, P.PRODUCT_NAME_BN, P.PRODUCT_AGRO_PRICE, P.PRODUCT_DISCOUNT, P.PRODUCT_MEASUREMENT_UNIT, P.PRODUCT_IMG 
                 FROM cart_details as C 
@@ -80,7 +116,7 @@ router.get("/cart/:id", (req, res) => {
     })
 })
 
-router.post("/cart", upload, (req, res) => {
+router.post("/cart", isLoggedIn, upload, (req, res) => {
     const userId = req.body.userId;
     const productId = req.body.productId;
     const quantity = req.body.quantity;
@@ -96,7 +132,7 @@ router.post("/cart", upload, (req, res) => {
     })
 })
 
-router.post("/cart/update/:id", upload, (req, res) => {
+router.post("/cart/update/:id", isLoggedIn, upload, (req, res) => {
     const cartId = req.params.id;
     const quantity = req.body.quantity;
     let sql = "UPDATE cart_details SET CART_QUANTITY = ? WHERE CART_ID = ?";
@@ -110,7 +146,7 @@ router.post("/cart/update/:id", upload, (req, res) => {
     })
 })
 
-router.get("/cart/delete/:id", upload, (req, res) => {
+router.get("/cart/delete/:id", isLoggedIn, upload, (req, res) => {
     const cartId = req.params.id;
     let sql = `DELETE FROM cart_details WHERE CART_ID = ?`;
     connection.query(sql, [cartId], (err, results) => {
@@ -123,7 +159,7 @@ router.get("/cart/delete/:id", upload, (req, res) => {
     })
 })
 
-router.post("/cart/submit/:id", upload, (req, res) => {
+router.post("/cart/submit/:id", isLoggedIn, upload, (req, res) => {
     const userId = req.params.id;
     let sql = `SELECT R.RESTAURENT_ID, P.PRODUCT_ID, C.CART_QUANTITY, P.PRODUCT_DISCOUNT
                 FROM cart_details as C 

@@ -137,6 +137,7 @@ export default function NavBar(){
             open={isMobileMenuOpen}
             onClose={handleMobileMenuClose}
         >
+        {loggedin && (
             <MenuItem>
                 <IconButton size="large" aria-label="show 4 new mails" color="inherit">
                 <Badge badgeContent={4} color="error">
@@ -145,6 +146,9 @@ export default function NavBar(){
                 </IconButton>
                 <p>Cart</p>
             </MenuItem>
+
+        )}
+
             <MenuItem>
                 <IconButton
                     size="large"
@@ -213,6 +217,7 @@ export default function NavBar(){
                     <Box sx={{ flexGrow: 1 }} />
 
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+                     {loggedin && ( 
                         <IconButton size="large" color="inherit">
                             <Typography
                                 variant="h6"
@@ -221,15 +226,19 @@ export default function NavBar(){
                             >
                             <Badge badgeContent={1} color="error">
                                 <Link href="/user/cart" ><a>Cart</a></Link>
-                            </Badge>
+                                    </Badge>
                             </Typography>
                         </IconButton>
+                     )}
 
+                    {loggedin && ( 
+                        
                         <IconButton size="large" color="inherit">
                             <Badge badgeContent={17} color="error">
                                 <NotificationsIcon sx={{ fontSize: 30 }}/>
                             </Badge>
                         </IconButton>
+                    )}
 
                         <IconButton
                             size="large"
@@ -240,7 +249,7 @@ export default function NavBar(){
                             onClick={handleProfileMenuOpen}
                             color="inherit"
                         >
-                            <AccountCircleIcon sx={{ fontSize: 30 }}/>
+                            
                             <Typography
                                 variant="h6"
                                 component="div"

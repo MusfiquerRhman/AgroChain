@@ -18,10 +18,8 @@ function MyApp(props) {
                 <CssBaseline />
                 <Grid container direction="column">
                     <Grid item><NavBar/></Grid>
-                    <Grid item container>
-                        <Grid item xs={0.25} sm={1} lg={2}/>
-                        <Grid item xs={11.5} sm={10} lg={8}><Component {...pageProps}/></Grid>
-                        <Grid item xs={0.25} sm={1} lg={2}/>
+                    <Grid item container justifyContent={"center"}>
+                        <Grid item xs={12} sm={10} lg={8}><Component {...pageProps}/></Grid>
                     </Grid>
                 </Grid>
             </FlashMessageProvider>

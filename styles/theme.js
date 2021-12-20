@@ -19,14 +19,14 @@ const theme = createTheme({
             main: "#DC0000"
         },
         background: {
-            default: "#000000",
-            paper: "#101015"
+            default: "#FFFFFF",
+            paper: "#F3F3F3"
         },
         text: {
-            primary: "#ffffff",
-            secondary: "#EEEEEE",
-            disabled: "#AAAAAA",
-            icon: "#FFFFFF"
+            primary: "#000000",
+            secondary: "#222222",
+            disabled: "#55555",
+            icon: "#000000"
         },
         action: {
             disabledBackground: '#AAAAAA',

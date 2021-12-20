@@ -27,9 +27,10 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 export default function Product(props) {
     const [value, setValue] = useState("")
     const [totalPrice, setTotalPrice] = useState("Enter Amount")
-    const [isUpdated, setIsUpdated] = useState(false)
+    const [snakeBarOpen, setSnakebarOpen] = useState(false)
     const [flashMessage, setFlashMEssage] = useState("");
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [snakeBarType, setSnakeBarType] = useState("success");
 
     useEffect(() => {
         const loggedInUser = localStorage.getItem("userId");
@@ -46,6 +47,7 @@ export default function Product(props) {
         if(event.target.value !== ""){
             setTotalPrice(`Price: ${(PRODUCT_AGRO_PRICE - PRODUCT_AGRO_PRICE * PRODUCT_DISCOUNT /100) * event.target.value}`);
         } else {
+            setSnakeBarType("error")
             setTotalPrice("Add to cart")
         }
     };
@@ -65,25 +67,29 @@ export default function Product(props) {
     const classes = style();
 
     const submitForm = async (e) => {
-        const formdata = new FormData();
-        formdata.append("userId", localStorage.getItem("userId"));
-        formdata.append("productId", PRODUCT_ID);
-        formdata.append("quantity", value);
-
         if(value > 0){
-            setIsUpdated(false);
+            const formdata = new FormData();
+            formdata.append("userId", localStorage.getItem("userId"));
+            formdata.append("productId", PRODUCT_ID);
+            formdata.append("quantity", value);
+
+            setSnakebarOpen(false);
             axios.post('/api/products/cart', formdata).then(res => {
                 if(res.status === 201){
-                    setIsUpdated(true);
+                    setSnakebarOpen(true);
                     setFlashMEssage(`${PRODUCT_NAME_EN} (${PRODUCT_NAME_BN}) Added to cart`);
+                    setValue("")
                 }
             }).catch(err => {
+                setSnakeBarType("error")
                 setFlashMEssage("Server Error! please try again later");
                 console.log(err.message);
             });
         }
         else {
-            setFlashMEssage("Enter an amount")
+            setSnakebarOpen(true);
+            setSnakeBarType("error");
+            setFlashMEssage("Enter a valid amount");
         }
     }
 
@@ -91,7 +97,7 @@ export default function Product(props) {
         if (reason === 'clickaway') {
             return;
         }
-        setIsUpdated(false);
+        setSnakebarOpen(false);
     };
 
     let isAvailable = true;
@@ -109,13 +115,13 @@ export default function Product(props) {
     return (
         <div>
             <Snackbar 
-                open={isUpdated} 
+                open={snakeBarOpen} 
                 autoHideDuration={6000} 
                 onClose={handleCloseSnackbar}
             >
                 <Alert 
                     onClose={handleCloseSnackbar} 
-                    severity={isUpdated ? "success" : "warning"} 
+                    severity={snakeBarType} 
                     sx={{ width: '100%' }}
                 >
                     {flashMessage}
@@ -151,7 +157,7 @@ export default function Product(props) {
                             value={value}
                             color= "secondary"
                             onChange={(e) => {handleChange(e)}}
-                            disabled={!isAvailable}
+                            disabled={!isAvailable || !isLoggedIn}
                             endAdornment={
                                 <InputAdornment position="end">
                                     {PRODUCT_MEASUREMENT_UNIT}
@@ -166,7 +172,7 @@ export default function Product(props) {
                     </FormControl>
                     <Button 
                         size="small" 
-                        variant="outlined"
+                        variant="contained"
                         disabled={!isAvailable || !isLoggedIn}
                         onClick={submitForm}
                     >

@@ -154,29 +154,10 @@ router.post("/login",  upload, async (req, res) => {
     })
 })
 
-router.post("/logout", (req, res) => {
+router.post("/logout", isLoggedIn, (req, res) => {
     req.session.destroy();
     res.status(200).send();
 })
 
 module.exports = router;
 
-
-// const accessToken = generateAccessToken({
-//     userName: user.userName,
-//     userId: user.userId,
-//     userEmail: user.userEmail,
-//     userPhone: user.userPhone,
-//     userType: user.userType,
-//     userJoinDate: user.userJoinDate
-// });
-
-
-// const user = {
-//     userId: result[0].USER_ID,
-//     userName: result[0].USER_NAME,
-//     userEmail: result[0].USER_EMAIL,
-//     userPhone: result[0].USER_PHONE,
-//     userType: result[0].USER_TYPE,
-//     userJoinDate: result[0].USER_JOIN_DATE
-// }
