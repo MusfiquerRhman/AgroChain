@@ -10,10 +10,7 @@ let upload = require("../Helpers/File");
 const session = require("express-session");
 
 const isLoggedIn = (req, res, next) => {
-    if(!req.session.userId){
-        res.status(403).send();
-    }
-    else {
+    if(req.session.userId){
         next();
     }
 }
@@ -35,15 +32,19 @@ const verifyJWT = (req, res, next) => {
     else {
         jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
             if(err){
-                res.status(403).json("Failed to authenticate");
+                res.status(403).json({auth: false});
             }
             else {
-                req.userId = user.userId;
+                res.status(200).json({auth: true});
                 next()
             }
         })
     }
 }
+
+router.get('/isLoggedIn', isLoggedIn, async (req, res) => {
+    res.status(200).send();
+})
 
 router.post("/registration", upload, async (req, res) => {
     try {
@@ -124,7 +125,6 @@ router.post("/login",  upload, async (req, res) => {
             console.log(err);
         }
         else {
-            console.log(users);
             if(users.length > 0){
                 if(bcrypt.compareSync(password, users[0].USER_PASSWORD)){
                     const user = {

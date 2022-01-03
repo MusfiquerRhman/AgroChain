@@ -1,20 +1,36 @@
 import Head from 'next/head'
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import ProductsList from '../components/productsComponents/ProductsList'
-// import {userContext} from '../ContextAPI/userDetailsConext'
+import axios from 'axios';
+import {useDispatch} from 'react-redux'
+import {login, logout} from '../reducers/userReducer'
 
 export default function Home({products}) {
-//   const {
-//     token, setToken,
-//     userId, setId,
-//     userEmail, setEmail,
-//     userName, setName,
-//     userPhone, setPhone,
-//     userType, setType,
-//     userJoinDate, setJoinDate
-// } = useContext(userContext);
+    const dispatch = useDispatch()
 
-// localStorage.getItem("userId")
+    useEffect(() => {
+        if(localStorage.getItem("userId") !== null){
+            axios.get(`/api/user/isLoggedIn`).then(res => {
+                if(res.status === 200){
+                    dispatch(login({
+                        userEmail: localStorage.getItem("userEmail"),	
+                        userPhone: localStorage.getItem("userPhone"),	
+                        userId: localStorage.getItem("userId"),	
+                        userName: localStorage.getItem("userName"),	
+                        userJoinDate: localStorage.getItem("userJoinDate"),	
+                        token:   localStorage.getItem("token"),	
+                        userType: localStorage.getItem("userType")
+                    }))
+                } 
+            }).catch(err => {
+                dispatch(logout());
+            });
+        }
+        else {
+            dispatch(logout());
+        }
+    })
+
     return (
         <div>
         <Head>

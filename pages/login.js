@@ -10,6 +10,8 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+import {useSelector, useDispatch} from 'react-redux'
+import {login} from '../reducers/userReducer'
 
 function Login() {
     const [password, handleChangePassword] = useInputState("");
@@ -17,7 +19,9 @@ function Login() {
     const [flashMessage, setFlashMEssage] = useState("");
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+    const user = useSelector((state) => state.user.value)
 
+    const dispatch = useDispatch()
     const classes = style();
 
     const submitForm = async (e) => {
@@ -34,6 +38,16 @@ function Login() {
                 localStorage.setItem("userPhone", res.data.userPhone);
                 localStorage.setItem("userType", res.data.userType);
                 localStorage.setItem("userJoinDate", res.data.userJoinDate);
+
+                dispatch(login({
+                    userEmail: res.data.userEmail,	
+                    userPhone: res.data.userPhone,	
+                    userId: res.data.userId,	
+                    userName: res.data.userName,	
+                    userJoinDate: res.data.userJoinDate,	
+                    token:  res.data.token,	
+                    userType: res.data.userType
+                }))
 
                 setIsAuthenticated(true);
             }

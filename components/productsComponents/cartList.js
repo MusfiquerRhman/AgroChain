@@ -39,7 +39,11 @@ export default function CartList({products}) {
     const submitOrders = async (e) => {
         e.preventDefault();
         const userId = localStorage.getItem("userId");
-        axios.post(`/api/products/cart/submit/${userId}`).then(res => {
+        axios.post(`/api/products/cart/submit/${userId}`, {
+            headers: {
+                "x-access-token": localStorage.getItem('token')
+            }
+        }).then(res => {
             if(res.status === 200){
                 setSnakeBarOpen(true);
                 setSnakeBarType("success");

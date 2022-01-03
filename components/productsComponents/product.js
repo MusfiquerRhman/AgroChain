@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import Router from 'next/router'
 import axios from 'axios';
 import style from "../../styles/productStyle"
-
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
@@ -36,9 +35,6 @@ export default function Product(props) {
         const loggedInUser = localStorage.getItem("userId");
         if(loggedInUser){
             setIsLoggedIn(true);
-        }
-        else {
-            setTotalPrice("Log in first!")
         }
     })
 
@@ -74,7 +70,11 @@ export default function Product(props) {
             formdata.append("quantity", value);
 
             setSnakebarOpen(false);
-            axios.post('/api/products/cart', formdata).then(res => {
+            axios.post('/api/products/cart', formdata, {
+                headers: {
+                    "x-access-token": localStorage.getItem('token')
+                }
+            }).then(res => {
                 if(res.status === 201){
                     setSnakebarOpen(true);
                     setFlashMEssage(`${PRODUCT_NAME_EN} (${PRODUCT_NAME_BN}) Added to cart`);
@@ -150,35 +150,38 @@ export default function Product(props) {
                     </CardContent>
                 </CardActionArea>
 
-                <CardActions>
-                    <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined" focused>
-                        <Input
-                            id="outlined-adornment-weight"
-                            value={value}
-                            color= "secondary"
-                            onChange={(e) => {handleChange(e)}}
+                {isLoggedIn && (
+                    <CardActions>
+                        <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined" focused>
+                            <Input
+                                id="outlined-adornment-weight"
+                                value={value}
+                                color= "secondary"
+                                onChange={(e) => {handleChange(e)}}
+                                disabled={!isAvailable || !isLoggedIn}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        {PRODUCT_MEASUREMENT_UNIT}
+                                    </InputAdornment>
+                                }
+                                aria-describedby="outlined-weight-helper-text"    
+                                type="number"                    
+                            />
+                            <FormHelperText id="outlined-weight-helper-text">
+                                {totalPrice}
+                            </FormHelperText>
+                        </FormControl>
+                        <Button 
+                            size="small" 
+                            variant="contained"
                             disabled={!isAvailable || !isLoggedIn}
-                            endAdornment={
-                                <InputAdornment position="end">
-                                    {PRODUCT_MEASUREMENT_UNIT}
-                                </InputAdornment>
-                            }
-                            aria-describedby="outlined-weight-helper-text"    
-                            type="number"                    
-                        />
-                        <FormHelperText id="outlined-weight-helper-text">
-                            {totalPrice}
-                        </FormHelperText>
-                    </FormControl>
-                    <Button 
-                        size="small" 
-                        variant="contained"
-                        disabled={!isAvailable || !isLoggedIn}
-                        onClick={submitForm}
-                    >
-                        Add to cart
-                    </Button>
-                </CardActions>
+                            onClick={submitForm}
+                        >
+                            Add to cart
+                        </Button>
+                    </CardActions>
+                )}
+
             </Paper>
         </div>
    );

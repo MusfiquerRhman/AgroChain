@@ -1,20 +1,25 @@
 import '../styles/globals.css'
 import NavBar from "../components/NavBar"
 import theme from "../styles/theme"
-
-    // Material UI components
 import Grid from '@mui/material/Grid';
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from '@mui/material/styles';
-import { FlashMessageProvider } from '../ContextAPI/flashMessageContext'
+import {configureStore} from '@reduxjs/toolkit'
+import {Provider} from 'react-redux'
+import userReducer from '../reducers/userReducer';
 
+const store = configureStore({
+    reducer: {
+        user: userReducer
+    }
+})
 
 function MyApp(props) {
     const { Component, pageProps } = props;
     return (
         <div>
         <ThemeProvider theme={theme}>
-            <FlashMessageProvider>
+            <Provider store={store}>
                 <CssBaseline />
                 <Grid container direction="column">
                     <Grid item><NavBar/></Grid>
@@ -22,7 +27,7 @@ function MyApp(props) {
                         <Grid item xs={12} sm={10} lg={8}><Component {...pageProps}/></Grid>
                     </Grid>
                 </Grid>
-            </FlashMessageProvider>
+            </Provider>
         </ThemeProvider>
         </div>
     )

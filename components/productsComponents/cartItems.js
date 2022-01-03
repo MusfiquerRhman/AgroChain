@@ -68,7 +68,11 @@ export default function Product(props) {
     
             console.log(`/api/products/cart/update/${CART_ID}`)
     
-            axios.post(`/api/products/cart/update/${CART_ID}`, formdata).then(res => {
+            axios.post(`/api/products/cart/update/${CART_ID}`, formdata, {
+                headers: {
+                    "x-access-token": localStorage.getItem('token')
+                }
+            }).then(res => {
                 if(res.status === 200){
                     setCartQuantity(quantity);
                     setSnakeBarOpen(true);
@@ -88,7 +92,11 @@ export default function Product(props) {
 
     const deleteForm = async (e) => {
         e.preventDefault();
-        axios.get(`/api/products/cart/delete/${CART_ID}`).then(res => {
+        axios.get(`/api/products/cart/delete/${CART_ID}`, {
+            headers: {
+                "x-access-token": localStorage.getItem('token')
+            }
+        }).then(res => {
             if(res.status === 200){
                 setSnakeBarOpen(true);
                 setSnakeBarType("success");

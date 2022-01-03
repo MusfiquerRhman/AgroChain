@@ -7,7 +7,11 @@ export default function Cart() {
 
     useEffect(() => {
         const userid = localStorage.getItem("userId");
-        axios.get(`/api/products/cart/${userid}`).then(res => {
+        axios.get(`/api/products/cart/${userid}`, {
+            headers: {
+                "x-access-token": localStorage.getItem('token')
+            }
+        }).then(res => {
             if(res.status === 200){
                 let items = []
                 res.data.forEach(element => {
@@ -15,6 +19,8 @@ export default function Cart() {
                 });
                 setProducts(items);
             }
+        }).catch(err => {
+            
         })
     }, [products])
 

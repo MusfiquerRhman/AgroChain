@@ -84,7 +84,11 @@ function AddProducts() {
             }
         }
     
-        axios.post('/api/products', formdata, progress).then(res => {
+        axios.post('/api/products', formdata, progress, {
+            headers: {
+                "x-access-token": localStorage.getItem('token')
+            }
+        }).then(res => {
             if(res.status === 201){
                 setUploadProgress(100);
                 setstatus(201);

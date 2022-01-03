@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import Router from 'next/router'
 import Link from "next/link"
 import {Search, SearchIconWrapper, StyledInputBase} from "../styles/navbarStyles";
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -19,6 +18,9 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import AdminDrawer from "./navbarComponents/AdminDrawer";
+import {logout} from '../reducers/userReducer'
+import {useSelector, useDispatch} from 'react-redux'
+
 
 export default function NavBar(){
     const [anchorEl, setAnchorEl] = useState(null);
@@ -30,15 +32,18 @@ export default function NavBar(){
     const [isAdmin, setAdmin] = useState(false);
     const [userName, setUserName] = useState("");
 
+    const dispatch = useDispatch()
+    const user = useSelector((state) => state.user.value)
+
     useEffect(() => {
-        const loggedInUser = localStorage.getItem("userId");
+        const loggedInUser = user.userId;
         if(loggedInUser){
             setLoggedIn(true);
-            const userType = localStorage.getItem("userType");
+            const userType = user.userType;;
             if(userType === "AVATER"){
                 setAdmin(true);
             }
-            setUserName(localStorage.getItem("userName"));
+            setUserName(user.userName);
         }
     })
 
@@ -58,20 +63,8 @@ export default function NavBar(){
     const handleLogOut = () => {
         setAnchorEl(null);
         handleMobileMenuClose();
-
-        localStorage.removeItem("token");
-        localStorage.removeItem("userId");
-        localStorage.removeItem("userEmail");
-        localStorage.removeItem("userName");
-        localStorage.removeItem("userPhone");
-        localStorage.removeItem("userType");
-        localStorage.removeItem("userJoinDate");
-
-        axios.post('/api/user/logout').then(res => {
-            Router.reload('/');
-        }).catch(err => {
-            console.log(err.message);
-        });
+        
+        dispatch(logout());
     }
 
     const handleMobileMenuOpen = (event) => {

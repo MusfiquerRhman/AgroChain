@@ -78,7 +78,12 @@ function ProductDetails(props) {
             formdata.append("productId", PRODUCT_ID);
             formdata.append("quantity", value);
     
-            axios.post('/api/products/cart', formdata).then(res => {
+            axios.post('/api/products/cart', {
+                headers: {
+                    "x-access-token": localStorage.getItem('token')
+                },
+                body: formdata
+            }).then(res => {
                 if(res.status === 201){
                     setIsSnakebarOpen(true);
                     setSnakeBarType("success")
