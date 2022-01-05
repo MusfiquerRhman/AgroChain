@@ -21,8 +21,8 @@ import AdminDrawer from "./navbarComponents/AdminDrawer";
 import {logout} from '../reducers/userReducer'
 import {useSelector, useDispatch} from 'react-redux'
 
-
 export default function NavBar(){
+    const dispatch = useDispatch()
     const [anchorEl, setAnchorEl] = useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
     const isMenuOpen = Boolean(anchorEl);
@@ -32,18 +32,15 @@ export default function NavBar(){
     const [isAdmin, setAdmin] = useState(false);
     const [userName, setUserName] = useState("");
 
-    const dispatch = useDispatch()
-    const user = useSelector((state) => state.user.value)
-
     useEffect(() => {
-        const loggedInUser = user.userId;
+        const loggedInUser = localStorage.getItem('userId');
         if(loggedInUser){
             setLoggedIn(true);
-            const userType = user.userType;;
+            const userType = localStorage.getItem('userType');
             if(userType === "AVATER"){
                 setAdmin(true);
             }
-            setUserName(user.userName);
+            setUserName(localStorage.getItem('userName'));
         }
     })
 
@@ -63,7 +60,6 @@ export default function NavBar(){
     const handleLogOut = () => {
         setAnchorEl(null);
         handleMobileMenuClose();
-        
         dispatch(logout());
     }
 

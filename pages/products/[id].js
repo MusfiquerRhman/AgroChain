@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import style from "../../styles/productDetailsStyle"
-
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import CardContent from '@mui/material/CardContent';

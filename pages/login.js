@@ -113,6 +113,12 @@ function Login() {
                                 </Typography>
                                 <Button fullWidth variant="contained" ><Link href="/registration"><a>new registration</a></Link></Button>
                             </Grid>
+                            <Grid item>
+                                <Typography variant="subtitle1">
+                                    Forgot password?
+                                </Typography>
+                                <Button fullWidth variant="outlined" ><Link href="/"><a>Reset Password</a></Link></Button>
+                            </Grid>
                         </Grid>
                     </Box>
                 </form>

@@ -14,6 +14,13 @@ const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
+export const authAxios = axios.create({
+    headers: {
+        "x-access-token": localStorage.getItem('token')
+    }
+})
+
+
 export default function CartList({products}) {
     const [snakeBarOpen, setSnakeBarOpen] = useState(false);
     const [snakeBarType, setSnakeBarType] = useState("success");
@@ -39,11 +46,7 @@ export default function CartList({products}) {
     const submitOrders = async (e) => {
         e.preventDefault();
         const userId = localStorage.getItem("userId");
-        axios.post(`/api/products/cart/submit/${userId}`, {
-            headers: {
-                "x-access-token": localStorage.getItem('token')
-            }
-        }).then(res => {
+        authAxios.post(`/api/products/cart/submit/${userId}`).then(res => {
             if(res.status === 200){
                 setSnakeBarOpen(true);
                 setSnakeBarType("success");

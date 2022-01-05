@@ -6,11 +6,16 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import BorderLinearProgress from '../../styles/BorderLinearProgress';
 import style from "../../styles/formStyle"
 import useInputState from '../../hooks/useInputState';
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+  
 function AddProducts() {
     const [nameEN, handleChangeNameEn, setNameEn] = useInputState("");
     const [nameBN, handleChangeNameBn, setNameBN] = useInputState("");
@@ -22,8 +27,18 @@ function AddProducts() {
 
     const [image, setImage] = useState("");
     const [uploadProgress, setUploadProgress] = useState(0);
-    const [status, setstatus] = useState(0);
     const [displayImage, setDisplayImage] = useState("");
+
+    const [snakeBarOpen, setSnakeBarOpen] = useState(false);
+    const [snakeBarType, setSnakeBarType] = useState("success");
+    const [snakeMessage, setSnakeMessage] = useState("");
+
+    const handleCloseSnakeBar = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setSnakeBarOpen(false);
+    };
 
     useEffect(() => {
         const type = localStorage.getItem("userType");
@@ -84,33 +99,24 @@ function AddProducts() {
             }
         }
     
-        axios.post('/api/products', formdata, progress, {
+        axios.post('/api/products', formdata , {
             headers: {
                 "x-access-token": localStorage.getItem('token')
             }
-        }).then(res => {
+        }, progress).then(res => {
             if(res.status === 201){
                 setUploadProgress(100);
-                setstatus(201);
                 resetFields();
+                setSnakeBarOpen(true);
+                setSnakeMessage("Product added succesfuly")
+                setSnakeBarType('success')
             }
-            else {
-                setUploadProgress(0);
-                setstatus(500);
-            }
-            console.log(res.status);
         }).catch(err => {
             setUploadProgress(0);
-            setstatus(500);
+            setSnakeBarOpen(true);
+            setSnakeMessage('Failed to add product, please try a agian')
+            setSnakeBarType('error')
         });
-    }
-
-    let flashMessage = ""
-    if(status === 201){
-        flashMessage = <div> <p> Product added succesfuly </p> </div>
-    }
-    else if(status === 500){
-        flashMessage = <div> <p> Failed to add product, please try a agian </p> </div>
     }
 
     let imageSelectedMsg = <Typography variant="h4" className = {classes.imagetext}>Select an Image</Typography>
@@ -118,10 +124,14 @@ function AddProducts() {
         imageSelectedMsg = <img src= {displayImage} className={classes.image}/>
     }
 
-
     return (
         <div>
-            {flashMessage}
+            <Snackbar open={snakeBarOpen} autoHideDuration={6000} onClose={handleCloseSnakeBar}>
+                <Alert onClose={handleCloseSnakeBar} severity={snakeBarType} sx={{ width: '100%' }}>
+                    {snakeMessage}
+                </Alert>
+            </Snackbar>
+
             {isAdmin && 
                 (<Paper elevation={6} > 
                     <form className={classes.form}>

@@ -24,7 +24,7 @@ const isLoggedIn = (req, res, next) => {
 }
 
 const isAdmin = (req, res, next) => {
-    if(!req.session.userId || req.session.userType !== "ADMIN"){
+    if(!req.session.userId || req.session.userType !== "AVATER"){
         res.status(403).send();
     }
     else {
