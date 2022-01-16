@@ -56,12 +56,13 @@ router.post("/", isAdmin, verifyJWT, upload, (req, res) => {
     const discount = req.body.discount;
     const addedBy = req.body.addedBy;
     const image = req.file.filename;
+    const details = req.body.details;
+    const isAvailable = req.body.isAvailable;
 
-    const sql = `INSERT INTO products_details (ADMIN_ID, PRODUCT_NAME_EN, PRODUCT_NAME_BN, PRODUCT_IN_STOCK_QUANTITY,
-                 PRODUCT_MEASUREMENT_UNIT, PRODUCT_AGRO_PRICE, PRODUCT_DISCOUNT, PRODUCT_IMG) VALUES 
-                (?, ?, ?, ?, ?, ?, ?, ?)`
+    const sql = `INSERT INTO products_details (ADMIN_ID, PRODUCT_NAME_EN, PRODUCT_NAME_BN, PRODUCT_IN_STOCK_QUANTITY, PRODUCT_MEASUREMENT_UNIT, 
+        PRODUCT_AGRO_PRICE, PRODUCT_DISCOUNT, PRODUCT_IMG, PRODUCT_DETAILS, IS_AVAILABLE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
             
-    connection.query(sql, [addedBy, nameEN, nameBN, inStockQuantity, measurementUnit, price, discount, image], (err, result) => {
+    connection.query(sql, [addedBy, nameEN, nameBN, inStockQuantity, measurementUnit, price, discount, image, details, isAvailable], (err, result) => {
         if(err){
             res.status(500).json({result});
         }
@@ -93,7 +94,7 @@ router.get('/orders', isAdmin, verifyJWT, (req, res) => {
 })
 
 router.get("/", (req, res) => {
-    let sql = `SELECT * FROM products_details`;
+    let sql = `SELECT * FROM products_details where IS_AVAILABLE = 1`;
     connection.query(sql, (err, data) => {
         if(err){
             res.status(500);
