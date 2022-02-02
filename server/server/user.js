@@ -1,57 +1,30 @@
-import express from 'express'
-let router = express.Router();
-import jwt from 'jsonwebtoken'
-import bcrypt from 'bcrypt'
-import fs from 'fs'
-import sesion from 'express-session'
-import connection from '../database/model.js'
-import upload from "../Helpers/File.js"
+import express from 'express';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import connection from '../database/model.js';
 import dotenv from "dotenv";
+import upload from "../Helpers/File.js";
+import {isLoggedIn, verifyJWT} from "./middlewear.js";
+
+let router = express.Router();
 dotenv.config({ silent: process.env.NODE_ENV === 'production' });
 
-const isLoggedIn = (req, res, next) => {
-    if(req){
-        next();
-    }
-    else {
-        res.status(401).send()
-    }
-}
-
-const isAdmin = (req, res, next) => {
-    if(!req.session.userId || req.session.userType !== "ADMIN"){
-        res.status(403).send();
-    }
-    else {
-        next();
-    }
-}
-
-const verifyJWT = (req, res, next) => {
-    const token = req.headers["x-access-token"];
-    if(!token){
-        res.status(403).send();
-    }
-    else {
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-            if(err){
-                res.status(403).json({auth: false});
-            }
-            else {
-                next()
-            }
-        })
-    }
-}
-
-router.get('/isLoggedIn', verifyJWT, async (req, res) => {
+router.get('/isLoggedIn', async (req, res) => {
     try{
-        res.status(200).send();
+        if(!req.session.userId){
+            res.status(200).send({code: 100});
+        }
+        else if(req.session.userId && req.session.userType !== "AVATER"){
+            res.status(200).send({code: 200});
+        }
+        else if(req.session.userId && req.session.userType === "AVATER"){
+            res.status(200).send({code: 970904});
+        }
     }
     catch {
         res.status(401).send()
     }
-})
+});
 
 router.post("/registration", upload, async (req, res) => {
     try {
@@ -121,7 +94,7 @@ router.post("/registration", upload, async (req, res) => {
 });
 
 
-router.post("/login",  upload, async (req, res) => {
+router.post("/login", upload, async (req, res) => {
     const userEmail = req.body.email;
     const password = req.body.password;
 
@@ -140,14 +113,22 @@ router.post("/login",  upload, async (req, res) => {
                     const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: 60*60*14});
                     req.session.userId = users[0].USER_ID;
                     req.session.userType = users[0].USER_TYPE;
-                    res.status(200).json({
-                        token: token, 
-                        userId: users[0].USER_ID,
-                        userName: users[0].USER_NAME,
-                        userEmail: users[0].USER_EMAIL,
-                        userPhone: users[0].USER_PHONE,
-                        userType: users[0].USER_TYPE,
-                        userJoinDate: users[0].USER_JOIN_DATE
+
+                    req.session.save((err) => {
+                        if(err){
+                            console.log(err);
+                        }
+                        else {
+                            res.status(200).json({
+                                token: token, 
+                                userId: users[0].USER_ID,
+                                userName: users[0].USER_NAME,
+                                userEmail: users[0].USER_EMAIL,
+                                userPhone: users[0].USER_PHONE,
+                                userType: users[0].USER_TYPE,
+                                userJoinDate: users[0].USER_JOIN_DATE
+                            })
+                        }
                     })
                 } 
                 else {
@@ -160,6 +141,7 @@ router.post("/login",  upload, async (req, res) => {
         }
     })
 })
+
 
 router.post("/logout", isLoggedIn, (req, res) => {
     req.session.destroy();
@@ -190,8 +172,6 @@ router.post("/cart", isLoggedIn, verifyJWT, upload, (req, res) => {
     const userId = req.body.userId;
     const productId = req.body.productId;
     const quantity = req.body.quantity;
-
-    console.log(req)
 
     const sql = "INSERT INTO cart_details (USER_ID, PRODUCT_ID, CART_QUANTITY) VALUES (?, ?, ?)"
     connection.query(sql, [userId, productId, quantity], (err, result) => {
@@ -297,4 +277,3 @@ router.post("/cart/submit/:id", isLoggedIn, verifyJWT, upload, (req, res) => {
 
 
 export default router;
-
