@@ -61,14 +61,15 @@ router.get('/orders', isAdmin, verifyJWT, (req, res) => {
 
 
 router.post('/season', upload, isAdmin, verifyJWT, (req, res) => {
-    let sql = `INSERT INTO seasons (SEASON_NAME,SEASON_START_DAY,SEASON_START_MONTH,SEASON_END_DAY,SEASON_END_MONTH) VALUES (?, ?, ?, ?, ?)`
+    let sql = `INSERT INTO seasons (SEASON_NAME,SEASON_START_DAY,SEASON_START_MONTH,SEASON_END_DAY,SEASON_END_MONTH,SEASON_DESCRIPTION) VALUES (?, ?, ?, ?, ?, ?)`
     let seasonName = req.body.seasonName;
     let startDay = req.body.startDay;
     let endDay = req.body.endDay;
     let startMonth = req.body.startMonth;
     let endMonth = req.body.endMonth;
+    let description = req.body.description;
 
-    connection.query(sql, [seasonName, startDay, startMonth, endDay, endMonth], (err, result) => {
+    connection.query(sql, [seasonName, startDay, startMonth, endDay, endMonth, description], (err, result) => {
         if(err){
             console.log(err)
             res.status(500).send();
@@ -81,7 +82,55 @@ router.post('/season', upload, isAdmin, verifyJWT, (req, res) => {
 
 
 router.get('/season', isAdmin, verifyJWT, (req, res) => {
-    let sql = `SELECT SEASON_ID, SEASON_NAME FROM seasons`
+    let sql = `SELECT * FROM seasons`;
+
+    connection.query(sql, (err, result) => {
+        if(err){
+            console.log(err);
+            res.status(500).send();
+        }
+        else {
+            res.status(200).json({result})
+        }
+    })
+})
+
+router.post('/season/delete/:id', isAdmin, verifyJWT, (req, res) => {
+    const seasonId = req.params.id;
+    let sql = "DELETE FROM seasons WHERE SEASON_ID = ?"
+
+    connection.query(sql, [seasonId], (err, results) => {
+        if(err){
+            console.log(err);
+            res.status(500).send();
+        }
+        else {
+            res.status(200).send();
+        }
+    })
+})
+
+
+router.post('/season/update/:id', isAdmin, verifyJWT, upload, (req, res) => {
+    let id = req.params.id;
+    let seasonName = req.body.seasonName;
+    let startDay = req.body.startDay;
+    let endDay = req.body.endDay;
+    let startMonth = req.body.startMonth;
+    let endMonth = req.body.endMonth;
+    let description = req.body.description;
+
+    let sql = "UPDATE seasons SET SEASON_NAME = ? SEASON_START_DAY = ? SEASON_START_MONTH = ? SEASON_END_DAY = ? SEASON_END_MONTH = ? SEASON_DESCRIPTION = ? WHERE SEASON_ID = ?";
+
+    connection.query(sql, [seasonName, startDay, startMonth, endDay, endMonth, description, id], (err, result) => {
+        if(err){
+            console.log(err);
+            res.status(500).send();
+        }
+        else {
+            res.status(200).send();
+        }
+    })
 })
 
 export default router;

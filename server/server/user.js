@@ -160,7 +160,7 @@ router.get("/cart/:id", isLoggedIn, verifyJWT, async (req, res) => {
                 WHERE C.USER_ID = ?`;
     connection.query(sql, [userId], (err, result) => {
         if(err){
-            res.status(500);
+            res.status(500).send();
         }
         else {
             res.status(200).json(result);
@@ -190,7 +190,7 @@ router.post("/cart/update/:id", isLoggedIn, verifyJWT, upload, (req, res) => {
     let sql = "UPDATE cart_details SET CART_QUANTITY = ? WHERE CART_ID = ?";
     connection.query(sql, [quantity, cartId], (err, results) => {
         if(err){
-            res.status(500);
+            res.status(500).send();
         }
         else {
             res.status(200).json(results);
@@ -203,10 +203,10 @@ router.get("/cart/delete/:id", isLoggedIn, verifyJWT, upload, (req, res) => {
     let sql = `DELETE FROM cart_details WHERE CART_ID = ?`;
     connection.query(sql, [cartId], (err, results) => {
         if(err){
-            res.status(500);
+            res.status(500).send();
         }
         else {
-            res.status(200);
+            res.status(200).send();
         }
     })
 })
@@ -223,7 +223,7 @@ router.post("/cart/submit/:id", isLoggedIn, verifyJWT, upload, (req, res) => {
 
     connection.query(sql, [userId], (err, details) => {
         if(err){
-            res.status(500);
+            res.status(500).send();
         }
         else {
             let sql = `INSERT INTO orders (RESRESTAURENT_ID) VALUES ('${details[0].RESTAURENT_ID}');`
@@ -231,7 +231,7 @@ router.post("/cart/submit/:id", isLoggedIn, verifyJWT, upload, (req, res) => {
             connection.query(sql, (err, result) => {
                 if(err){
                     console.log(err)
-                    res.status(500);
+                    res.status(500).send();
                 }
                 else {
                     let sql = `SELECT ORDER_ID FROM orders WHERE RESRESTAURENT_ID = '${details[0].RESTAURENT_ID}'  ORDER BY ORDER_DATE DESC LIMIT 1`;
@@ -239,7 +239,7 @@ router.post("/cart/submit/:id", isLoggedIn, verifyJWT, upload, (req, res) => {
                     connection.query(sql, (err, data) => {
                         if(err){
                             console.log(err)
-                            res.status(500);
+                            res.status(500).send();
                         }
                         else {
                             let orderId = data[0].ORDER_ID;
@@ -253,13 +253,13 @@ router.post("/cart/submit/:id", isLoggedIn, verifyJWT, upload, (req, res) => {
                             connection.query(sql, (err, output) => {
                                 if(err){
                                     console.log(err)
-                                    res.status(500);
+                                    res.status(500).send();
                                 }
                                 else {
                                     sql = `DELETE FROM cart_details WHERE USER_ID = '${userId}';`
                                     connection.query(sql, (err, output) => {
                                         if(err){
-                                            res.status(500);
+                                            res.status(500).send();
                                         }
                                         else {
                                             res.status(200).json(output);
