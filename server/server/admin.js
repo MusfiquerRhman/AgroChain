@@ -1,10 +1,10 @@
 import express from 'express';
-let router = express.Router({mergeParams: true});
+let router = express.Router({ mergeParams: true });
 import fs from 'fs';
 
 import connection from '../database/model.js';
 import upload from "../Helpers/File.js";
-import {isAdmin, verifyJWT} from "./middlewear.js";
+import { isAdmin, verifyJWT } from "./middlewear.js";
 
 router.post("/add", isAdmin, verifyJWT, upload, (req, res) => {
     const nameEN = req.body.nameEN;
@@ -17,7 +17,7 @@ router.post("/add", isAdmin, verifyJWT, upload, (req, res) => {
     const image = req.file.filename;
     const details = req.body.details;
     let isAvailable = req.body.isAvailable;
-    if(isAvailable){
+    if (isAvailable) {
         isAvailable = 1;
     }
     else {
@@ -26,15 +26,15 @@ router.post("/add", isAdmin, verifyJWT, upload, (req, res) => {
 
     const sql = `INSERT INTO products_details (ADMIN_ID, PRODUCT_NAME_EN, PRODUCT_NAME_BN, PRODUCT_IN_STOCK_QUANTITY, PRODUCT_MEASUREMENT_UNIT, 
         PRODUCT_AGRO_PRICE, PRODUCT_DISCOUNT, PRODUCT_IMG, PRODUCT_DETAILS, IS_AVAILABLE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-            
+
     connection.query(sql, [addedBy, nameEN, nameBN, inStockQuantity, measurementUnit, price, discount, image, details, isAvailable], (err, result) => {
-        if(err){
-            res.status(500).json({result});
+        if (err) {
+            res.status(500).json({ result });
         }
         else {
-            res.status(201).json({result});
+            res.status(201).json({ result });
         }
-    })   
+    })
 })
 
 
@@ -50,11 +50,11 @@ router.get('/orders', isAdmin, verifyJWT, (req, res) => {
                 ORDER BY o.ORDER_DATE`;
 
     connection.query(sql, (err, result) => {
-        if(err){
-            res.status(500).json({result});
+        if (err) {
+            res.status(500).json({ result });
         }
         else {
-            res.status(201).json({result});
+            res.status(201).json({ result });
         }
     })
 })
@@ -70,7 +70,7 @@ router.post('/season', upload, isAdmin, verifyJWT, (req, res) => {
     let description = req.body.description;
 
     connection.query(sql, [seasonName, startDay, startMonth, endDay, endMonth, description], (err, result) => {
-        if(err){
+        if (err) {
             console.log(err)
             res.status(500).send();
         }
@@ -85,12 +85,12 @@ router.get('/season', isAdmin, verifyJWT, (req, res) => {
     let sql = `SELECT * FROM seasons`;
 
     connection.query(sql, (err, result) => {
-        if(err){
+        if (err) {
             console.log(err);
             res.status(500).send();
         }
         else {
-            res.status(200).json({result})
+            res.status(200).json({ result })
         }
     })
 })
@@ -100,7 +100,7 @@ router.post('/season/delete/:id', isAdmin, verifyJWT, (req, res) => {
     let sql = "DELETE FROM seasons WHERE SEASON_ID = ?"
 
     connection.query(sql, [seasonId], (err, results) => {
-        if(err){
+        if (err) {
             console.log(err);
             res.status(500).send();
         }
@@ -112,18 +112,18 @@ router.post('/season/delete/:id', isAdmin, verifyJWT, (req, res) => {
 
 
 router.post('/season/update/:id', isAdmin, verifyJWT, upload, (req, res) => {
-    let id = req.params.id;
-    let seasonName = req.body.seasonName;
-    let startDay = req.body.startDay;
-    let endDay = req.body.endDay;
-    let startMonth = req.body.startMonth;
-    let endMonth = req.body.endMonth;
-    let description = req.body.description;
+    const id = req.params.id;
+    const seasonName = req.body.seasonName;
+    const startDay = req.body.startDay;
+    const endDay = req.body.endDay;
+    const startMonth = req.body.startMonth;
+    const endMonth = req.body.endMonth;
+    const description = req.body.description;
 
-    let sql = "UPDATE seasons SET SEASON_NAME = ? SEASON_START_DAY = ? SEASON_START_MONTH = ? SEASON_END_DAY = ? SEASON_END_MONTH = ? SEASON_DESCRIPTION = ? WHERE SEASON_ID = ?";
+    const sql = "UPDATE seasons SET SEASON_NAME = ?, SEASON_START_DAY = ?, SEASON_START_MONTH = ?, SEASON_END_DAY = ?, SEASON_END_MONTH = ?, SEASON_DESCRIPTION = ? WHERE SEASON_ID = ?";
 
     connection.query(sql, [seasonName, startDay, startMonth, endDay, endMonth, description, id], (err, result) => {
-        if(err){
+        if (err) {
             console.log(err);
             res.status(500).send();
         }
