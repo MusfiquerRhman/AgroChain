@@ -133,4 +133,17 @@ router.post('/season/update/:id', isAdmin, verifyJWT, upload, (req, res) => {
     })
 })
 
+router.get("/seasonshort", isAdmin, verifyJWT, (req, res) => {
+    const sql = "SELECT `SEASON_ID`, `SEASON_NAME` FROM `seasons`";
+    connection.query(sql, (err, result) => {
+        if(err){
+            console.log(err);
+            res.status(500).send()
+        }
+        else {
+            res.status(200).send(result)
+        }
+    })
+})
+
 export default router;

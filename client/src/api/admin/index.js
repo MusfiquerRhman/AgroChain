@@ -55,3 +55,11 @@ export const updateSeasons = async (seasonName, startDay, startMonth, endDay, en
     }
 }
 
+export const seasonshort = async () => {
+    try {
+        return await authAxios.get(`${API_URL}/seasonshort`);
+    }
+    catch(err){
+        return -1;
+    }
+}

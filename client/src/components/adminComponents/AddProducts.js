@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 // MaterialUI Elements
 import Typography from '@mui/material/Typography';
@@ -11,6 +11,13 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import AddIcon from '@mui/icons-material/Add';
+import TagIcon from '@mui/icons-material/Tag';
+import BeachAccessIcon from '@mui/icons-material/BeachAccess';
+
+import * as adminApi from "../../api/admin"
 
 import BorderLinearProgress from '../../styles/BorderLinearProgress';
 import style from "../../styles/formStyle"
@@ -19,7 +26,7 @@ import useInputState from '../../hooks/useInputState';
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
-  
+
 function AddProducts() {
     const [nameEN, handleChangeNameEn, setNameEn] = useInputState("");
     const [nameBN, handleChangeNameBn, setNameBN] = useInputState("");
@@ -39,7 +46,32 @@ function AddProducts() {
     const [snakeBarType, setSnakeBarType] = useState("success");
     const [snakeMessage, setSnakeMessage] = useState("");
 
+    const [seasons, setSeasons] = useState([]);
+
+    const [anchorElSeason, setAnchorElSeason] = React.useState(null);
+    const [anchorElTag, setAnchorElTag] = React.useState(null);
+
+    const openSeason = Boolean(anchorElSeason);
+
+    const handleClickSeason = (event) => {
+        setAnchorElSeason(event.currentTarget);
+    };
+
+    const handleCloseSeason = () => {
+        setAnchorElSeason(null);
+    };
+
+    const openTag = Boolean(anchorElTag);
+
+    const handleClickTag = (event) => {
+        setAnchorElTag(event.currentTarget);
+    };
     
+    const handleCloseTag = () => {
+        setAnchorElTag(null);
+    };
+
+
     const submitForm = async (e) => {
         e.preventDefault();
         const formdata = new FormData();
@@ -56,20 +88,21 @@ function AddProducts() {
 
         const progress = {
             onUploadProgress: (ProgressEvent) => {
-                const {loaded, total} = ProgressEvent;
+                const { loaded, total } = ProgressEvent;
                 let percent = Math.floor((loaded * 100) / total);
-                if(percent < 100){
+                if (percent < 100) {
                     setUploadProgress(percent);
                 }
             }
         }
-    
-        axios.post('http://localhost:5000/api/avater/add', formdata , {
+
+        axios.post('http://localhost:5000/api/avater/add', formdata, {
             headers: {
                 "x-access-token": localStorage.getItem('token')
             }
         }, progress).then(res => {
-            if(res.status === 201){
+            if (res.status === 201) {
+                console.log(res);
                 setUploadProgress(100);
                 resetFields();
                 setSnakeBarOpen(true);
@@ -94,10 +127,20 @@ function AddProducts() {
 
     useEffect(() => {
         const type = localStorage.getItem("keyboardCat");
-        if(type === "AVATER"){
+        if (type === "AVATER") {
             setIsAdmin(true);
         }
     }, [isAdmin])
+
+    useEffect(() => {
+        async function getSeasons(){
+            const res = await adminApi.seasonshort();
+            if(res.status === 200){
+                setSeasons(res.data);
+            }
+        }
+        getSeasons();
+    }, [])
 
     const handleChangeIsAvailable = (event) => {
         setIsAvailable(event.target.checked);
@@ -116,7 +159,7 @@ function AddProducts() {
         setImage(files[0]);
         const reader = new FileReader();
         reader.onload = () => {
-            if(reader.readyState === 2){
+            if (reader.readyState === 2) {
                 setDisplayImage(reader.result)
             }
         }
@@ -132,89 +175,89 @@ function AddProducts() {
         setMeasurementUnit("");
         setPrice("");
         setDiscout(0);
-        setImage("");      
+        setImage("");
         setdetails("");
     }
 
-    let imageSelectedMsg = <Typography variant="h4" className = {classes.imagetext}>Select an Image</Typography>
-    if(displayImage !== ""){
-        imageSelectedMsg = <img src= {displayImage} className={classes.image}/>
+    let imageSelectedMsg = <Typography variant="h4" className={classes.imagetext}>Select an Image</Typography>
+    if (displayImage !== "") {
+        imageSelectedMsg = <img src={displayImage} className={classes.image} />
     }
 
     return (
         <div>
-            <Snackbar 
-                open={snakeBarOpen} 
-                autoHideDuration={6000} 
+            <Snackbar
+                open={snakeBarOpen}
+                autoHideDuration={6000}
                 onClose={handleCloseSnakeBar}
             >
-                <Alert 
-                    onClose={handleCloseSnakeBar} 
-                    severity={snakeBarType} 
+                <Alert
+                    onClose={handleCloseSnakeBar}
+                    severity={snakeBarType}
                     sx={{ width: '100%' }}
                 >
                     {snakeMessage}
                 </Alert>
             </Snackbar>
 
-            {isAdmin && 
-                (<Paper elevation={6} > 
+            {isAdmin &&
+                (<Paper elevation={6} >
                     <form className={classes.form}>
                         <Typography variant="h3">
                             Enter product details
                         </Typography>
 
-                        <BorderLinearProgress 
-                            value={uploadProgress} 
+                        <BorderLinearProgress
+                            value={uploadProgress}
                             variant="determinate"
                         />
                         <Box sx={{ width: '100%' }}>
-                            <Grid container 
-                                spacing={2} 
-                                direction="row" 
+                            <Grid container
+                                spacing={2}
+                                direction="row"
                                 justifyContent="space-between"
                             >
-                                <Grid container item 
-                                    direction="column" 
-                                    spacing={2} 
+                                <Grid container item
+                                    direction="column"
+                                    spacing={2}
                                     xs={12} lg={6}
                                 >
                                     <Grid item>
-                                        <TextField id="standard-basic" 
-                                            label="Name (English)" 
-                                            variant="standard" 
-                                            value={nameEN} 
+                                        <TextField id="standard-basic"
+                                            label="Name (English)"
+                                            variant="standard"
+                                            value={nameEN}
                                             onChange={handleChangeNameEn}
                                             required
                                             fullWidth
                                         />
                                     </Grid>
                                     <Grid item>
-                                        <TextField id="standard-basic" 
-                                            label="Name (bn)" 
-                                            variant="standard" 
-                                            value={nameBN} 
+                                        <TextField id="standard-basic"
+                                            label="Name (bn)"
+                                            variant="standard"
+                                            value={nameBN}
                                             onChange={handleChangeNameBn}
                                             required
                                             fullWidth
                                         />
                                     </Grid>
                                     <Grid item>
-                                        <TextField id="standard-basic" 
-                                            label="In stock" 
-                                            variant="standard" 
+                                        <TextField id="standard-basic"
+                                            label="In stock"
+                                            variant="standard"
                                             type="number"
                                             value={inStockQuantity}
                                             onChange={handleChangeInStockQuantity}
                                             required
                                             fullWidth
-                                            InputProps={{ inputProps: { min: 0 }}}
+                                            InputProps={{ inputProps: { min: 0 } }}
                                         />
                                     </Grid>
                                     <Grid item>
-                                        <TextField id="standard-basic" 
-                                            label="mesurement unit" 
-                                            variant="standard" 
+                                        <TextField id="standard-basic"
+                                            label="mesurement unit"
+                                            variant="standard"
                                             value={measurementUnit}
                                             onChange={handleChangeMeasurementUnit}
                                             required
@@ -222,76 +265,155 @@ function AddProducts() {
                                         />
                                     </Grid>
                                     <Grid item>
-                                        <TextField id="standard-basic" 
-                                            label="price" 
-                                            variant="standard" 
+                                        <TextField id="standard-basic"
+                                            label="price"
+                                            variant="standard"
                                             type="number"
                                             value={price}
                                             onChange={handleChangePrice}
                                             required
                                             fullWidth
-                                            InputProps={{ inputProps: { min: 0 }}}
+                                            InputProps={{ inputProps: { min: 0 } }}
                                         />
                                     </Grid>
-                                    <Grid item>                   
-                                        <TextField id="standard-basic" 
-                                            label="Discount" 
+                                    <Grid item>
+                                        <TextField id="standard-basic"
+                                            label="Discount"
                                             type="number"
-                                            variant="standard" 
+                                            variant="standard"
                                             value={discount}
                                             onChange={handleChangeDicount}
                                             required
                                             fullWidth
-                                            InputProps={{ inputProps: { min: 0, max: 100 }}}
+                                            InputProps={{ inputProps: { min: 0, max: 100 } }}
                                         />
-                                    </Grid>                            
-                                        <Grid item>                   
-                                            <TextField id="product_details" 
-                                                label="Description" 
-                                                type="text"
-                                                variant="standard" 
-                                                value={details}
-                                                onChange={handleChangeDetails}
-                                                multiline = {true}
-                                                rows={4}
-                                                fullWidth
-                                                required
-                                            />
-                                        </Grid>
+                                    </Grid>
+                                    <Grid item>
+                                        <TextField id="product_details"
+                                            label="Description"
+                                            type="text"
+                                            variant="standard"
+                                            value={details}
+                                            onChange={handleChangeDetails}
+                                            multiline={true}
+                                            rows={4}
+                                            fullWidth
+                                            required
+                                        />
+                                    </Grid>
+                                    <Grid item 
+                                        container
+                                        spacing={2}
+                                        direction="row"
+                                        justifyContent="space-between">
                                         <Grid item>
-                                        <FormControlLabel
-                                                label="Make available in products page and search results"
-                                                control={
-                                                    <Checkbox 
-                                                        checked={isAvailable} 
-                                                        onChange={handleChangeIsAvailable} 
-                                                    />
-                                                }
-                                            />
+                                            <Button
+                                                id="demo-positioned-button"
+                                                aria-controls={openSeason ? 'demo-positioned-menu' : undefined}
+                                                aria-haspopup="true"
+                                                aria-expanded={openSeason ? 'true' : undefined}
+                                                onClick={handleClickSeason}
+                                                variant="contained"
+                                                startIcon={<AddIcon />}
+                                            >
+                                                Add Seasons
+                                            </Button>
+                                            <Menu
+                                                id="demo-positioned-menu"
+                                                aria-labelledby="demo-positioned-button"
+                                                anchorEl={anchorElSeason}
+                                                open={openSeason}
+                                                onClose={handleCloseSeason}
+                                                anchorOrigin={{
+                                                    vertical: 'top',
+                                                    horizontal: 'left',
+                                                }}
+                                                transformOrigin={{
+                                                    vertical: 'top',
+                                                    horizontal: 'left',
+                                                }}
+                                            >
+                                                {seasons.map((season) => {
+                                                    return <MenuItem onClick={handleCloseSeason} key={season.SEASON_ID}>{season.SEASON_NAME}</MenuItem>
+                                                })
+                                                /* <MenuItem onClick={handleClose}>Profile</MenuItem>
+                                                <MenuItem onClick={handleClose}>My account</MenuItem>
+                                                <MenuItem onClick={handleClose}>Logout</MenuItem> */}
+                                            </Menu>
                                         </Grid>
+                                    </Grid>
+                                    <Grid item 
+                                        container
+                                        spacing={2}
+                                        direction="row"
+                                        justifyContent="space-between">
+                                        <Grid item>
+                                            <Button
+                                                id="demo-positioned-button"
+                                                aria-controls={openTag ? 'demo-positioned-menu' : undefined}
+                                                aria-haspopup="true"
+                                                aria-expanded={openTag ? 'true' : undefined}
+                                                onClick={handleClickTag}
+                                                variant="contained"
+                                                startIcon={<AddIcon />}
+                                            >
+                                                Add Tags
+                                            </Button>
+                                            <Menu
+                                                id="demo-positioned-menu"
+                                                aria-labelledby="demo-positioned-button"
+                                                anchorEl={anchorElTag}
+                                                open={openTag}
+                                                onClose={handleCloseTag}
+                                                anchorOrigin={{
+                                                    vertical: 'top',
+                                                    horizontal: 'left',
+                                                }}
+                                                transformOrigin={{
+                                                    vertical: 'top',
+                                                    horizontal: 'left',
+                                                }}
+                                            >
+                                                {/* <MenuItem onClick={handleClose}>Profile</MenuItem>
+                                                <MenuItem onClick={handleClose}>My account</MenuItem>
+                                                <MenuItem onClick={handleClose}>Logout</MenuItem> */}
+                                            </Menu>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid item>
+                                        <FormControlLabel
+                                            label="Make available in products page and search results"
+                                            control={
+                                                <Checkbox
+                                                    checked={isAvailable}
+                                                    onChange={handleChangeIsAvailable}
+                                                />
+                                            }
+                                        />
+                                    </Grid>
                                 </Grid>
                                 <Grid item xs={12} lg={6}>
                                     {imageSelectedMsg}
                                     <Grid item>
-                                        <Button 
-                                            variant="contained" 
-                                            component="label" 
-                                            fullWidth 
-                                            sx={{marginTop: "1rem"}}
+                                        <Button
+                                            variant="contained"
+                                            component="label"
+                                            fullWidth
+                                            sx={{ marginTop: "1rem" }}
                                         >
                                             Select a product image
-                                            <input name="image" 
-                                                type="file" 
-                                                onChange={(e) => {imageSelectHandeler(e.target.files)}}
+                                            <input name="image"
+                                                type="file"
+                                                onChange={(e) => { imageSelectHandeler(e.target.files) }}
                                                 hidden
                                                 required
                                             />
                                         </Button>
                                     </Grid >
-                                    <Grid item sx={{marginTop: "1rem"}}>
-                                        <Button fullWidth 
-                                            onClick={submitForm} 
-                                            variant="outlined" 
+                                    <Grid item sx={{ marginTop: "1rem" }}>
+                                        <Button fullWidth
+                                            onClick={submitForm}
+                                            variant="outlined"
                                         >
                                             Add product
                                         </Button>
@@ -302,8 +424,8 @@ function AddProducts() {
                     </form>
                 </Paper>)
             }
-            {!isAdmin && 
-                <h1 style={{textAlign: "center"}}>404 | This page could not be found.</h1>
+            {!isAdmin &&
+                <h1 style={{ textAlign: "center" }}>404 | This page could not be found.</h1>
             }
         </div>
     )

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -57,6 +57,7 @@ function Season() {
             setSnakeBarOpen(true);
             setSnakeBarType('success');
             setSnakeMessage(`${seasonName} Season added`);
+            window.location.reload();
         }
         else {
             setSnakeBarOpen(true);
@@ -67,9 +68,7 @@ function Season() {
 
     return (
         <div>
-
             <h1>Seasons</h1>
-
             <Snackbar
                 open={snakeBarOpen}
                 autoHideDuration={6000}

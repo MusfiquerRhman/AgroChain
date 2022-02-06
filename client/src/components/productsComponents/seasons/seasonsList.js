@@ -6,7 +6,6 @@ import * as adminApi from "../../../api/admin"
 import SeasonsItems from './seasonItems';
 
 export default function SeasonsList() {
-
     const [allSeasons, setAllSeasons] = useState([]);
 
     useEffect(() => {

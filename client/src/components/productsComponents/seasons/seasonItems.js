@@ -20,7 +20,7 @@ import Box from '@mui/material/Box';
 
 import * as adminApi from "../../../api/admin"
 import useInputState from "../../../hooks/useInputState"
-import {Alert} from "../../helper"
+import { Alert } from "../../helper"
 
 export default function SeasonsItems(props) {
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -62,6 +62,7 @@ export default function SeasonsItems(props) {
     const [description, handleChangeDescription, setSeasonDescription] = useInputState(SEASON_DESCRIPTION);
     const [openEditForm, setOpenEditForm] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
+    const [isDeleted, setIsDeleted] = useState(false);
     const [startDate, setStartDate] = useState(new Date(startDateString));
     const [endDate, setEndDate] = useState(new Date(endDateString));
     const [snakeBarOpen, setSnakeBarOpen] = useState(false);
@@ -112,167 +113,194 @@ export default function SeasonsItems(props) {
         }
     }
 
-    const deleteForm = () => {
-        console.log("delete")
+    const deleteForm = async () => {
+        const res = await adminApi.deleteSeasons(SEASON_ID);
+        if (res.status === 200) {
+            setSnakeBarOpen(true);
+            setSnakeBarType("success");
+            setSnakeMessage("Successfully Deleted");
+            setIsDeleted(true);
+        }
+        else {
+            setSnakeBarOpen(true);
+            setSnakeBarType("error");
+            setSnakeMessage("Failed to Delete");
+        }
+        setDeleteOpen(false);
     }
-
 
     return (
         <React.Fragment>
-            <Snackbar
-                open={snakeBarOpen}
-                autoHideDuration={6000}
-                onClose={handleCloseSnakeBar}
-            >
-                <Alert
-                    onClose={handleCloseSnakeBar}
-                    severity={snakeBarType}
-                    sx={{ width: '100%' }}
-                >
-                    {snakeMessage}
-                </Alert>
-            </Snackbar>
+            {!isDeleted &&
+                <div>
+                    <Snackbar
+                        open={snakeBarOpen}
+                        autoHideDuration={6000}
+                        onClose={handleCloseSnakeBar}
+                    >
+                        <Alert
+                            onClose={handleCloseSnakeBar}
+                            severity={snakeBarType}
+                            sx={{ width: '100%' }}
+                        >
+                            {snakeMessage}
+                        </Alert>
+                    </Snackbar>
 
-            <Dialog
-                    open={deleteOpen}
-                    onClose={handleCloseDelete}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">
-                        Are you sure you want to delete?
-                    </DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            {seasonName}
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleCloseDelete}>Cancle</Button>
-                        <Button onClick={deleteForm} autoFocus color="error">
-                            Delete
-                        </Button>
-                    </DialogActions>
-                </Dialog>
+                    <Dialog
+                        open={deleteOpen}
+                        onClose={handleCloseDelete}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">
+                            Are you sure you want to delete?
+                        </DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                                {`${seasonName} (${startDate.getDate()} ${months[startDate.getMonth()]} - ${endDate.getDate()} ${months[endDate.getMonth()]})`}
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleCloseDelete}>Cancle</Button>
+                            <Button onClick={deleteForm} autoFocus color="error">
+                                Delete
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
 
-            <Dialog open={openEditForm} onClose={cancelSeasonEdit} fullWidth={true}>
-                <form>
-                    <DialogTitle>Edit {SEASON_NAME}</DialogTitle>
-                    <DialogContent>
-                        <Box sx={{ width: '100%' }}>
-                            <Grid container
-                                item
-                                direction="column"
-                                spacing={2}
-                                justifyContent="center"
-                                alignItems="center"
-                            >
-                                <Grid item sx={{ width: "100%" }}>
-                                    <TextField id="registration-name"
-                                        label="Season Name"
-                                        variant="standard"
-                                        value={seasonName}
-                                        onChange={handleChangeSeasonName}
-                                        required
-                                        fullWidth
-                                    />
-                                </Grid>
-                                <Grid item sx={{ width: "100%" }}>
-                                    <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                        <DatePicker
-                                            openTo="month"
-                                            views={['month', 'day']}
-                                            label="Select when the season starts"
-                                            value={startDate}
-                                            onChange={(newValue) => {
-                                                setStartDate(newValue);
-                                            }}
-                                            renderInput={(params) =>
-                                                <TextField {...params}
-                                                    helperText={null}
-                                                    sx={{
-                                                        width: "100%",
-                                                        minWidth: "270px",
-                                                        marginBottom: "0.5rem",
-                                                        marginTop: "0.5rem"
+                    <Dialog open={openEditForm} onClose={cancelSeasonEdit} fullWidth={true}>
+                        <form>
+                            <DialogTitle sx={{ textTransform: 'capitalize' }} >Edit {SEASON_NAME}</DialogTitle>
+                            <DialogContent>
+                                <Box sx={{ width: '100%' }}>
+                                    <Grid container
+                                        item
+                                        direction="column"
+                                        spacing={2}
+                                        justifyContent="center"
+                                        alignItems="center"
+                                    >
+                                        <Grid item sx={{ width: "100%" }}>
+                                            <TextField id="registration-name"
+                                                label="Season Name"
+                                                variant="standard"
+                                                value={seasonName}
+                                                onChange={handleChangeSeasonName}
+                                                required
+                                                fullWidth
+                                            />
+                                        </Grid>
+                                        <Grid item sx={{ width: "100%" }}>
+                                            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                                <DatePicker
+                                                    openTo="month"
+                                                    views={['month', 'day']}
+                                                    label="Select when the season starts"
+                                                    value={startDate}
+                                                    onChange={(newValue) => {
+                                                        setStartDate(newValue);
                                                     }}
+                                                    renderInput={(params) =>
+                                                        <TextField {...params}
+                                                            helperText={null}
+                                                            sx={{
+                                                                width: "100%",
+                                                                minWidth: "270px",
+                                                                marginBottom: "0.5rem",
+                                                                marginTop: "0.5rem"
+                                                            }}
+                                                        />
+                                                    }
                                                 />
-                                            }
-                                        />
-                                    </LocalizationProvider>
-                                </Grid>
-                                <Grid item sx={{ width: "100%" }}>
-                                    <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                        <DatePicker
-                                            openTo="month"
-                                            views={['month', 'day']}
-                                            label="Select when the season Ends"
-                                            value={endDate}
-                                            onChange={(newValue) => {
-                                                setEndDate(newValue);
-                                            }}
-                                            renderInput={(params) =>
-                                                <TextField {...params}
-                                                    helperText={null}
-                                                    sx={{ width: "100%", minWidth: "270px" }}
+                                            </LocalizationProvider>
+                                        </Grid>
+                                        <Grid item sx={{ width: "100%" }}>
+                                            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                                <DatePicker
+                                                    openTo="month"
+                                                    views={['month', 'day']}
+                                                    label="Select when the season Ends"
+                                                    value={endDate}
+                                                    onChange={(newValue) => {
+                                                        setEndDate(newValue);
+                                                    }}
+                                                    renderInput={(params) =>
+                                                        <TextField {...params}
+                                                            helperText={null}
+                                                            sx={{ width: "100%", minWidth: "270px" }}
+                                                        />
+                                                    }
                                                 />
-                                            }
-                                        />
-                                    </LocalizationProvider>
-                                </Grid>
-                                <Grid item sx={{ width: "100%" }}>
-                                    <TextField id="registration-description"
-                                        label="Description"
-                                        type="text"
-                                        variant="standard"
-                                        value={description}
-                                        onChange={handleChangeDescription}
-                                        multiline={true}
-                                        rows={6}
-                                        required
-                                        fullWidth
-                                        placeholder='250 Charecters max'
-                                        inputProps={{ maxLength: 250 }}
-                                    />
-                                </Grid>
-                            </Grid>
-                        </Box>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={updateForm}>Add</Button>
-                        <Button onClick={cancelSeasonEdit}>Cancel</Button>
-                    </DialogActions>
-                </form>
-            </Dialog>
+                                            </LocalizationProvider>
+                                        </Grid>
+                                        <Grid item sx={{ width: "100%" }}>
+                                            <TextField id="registration-description"
+                                                label="Description"
+                                                type="text"
+                                                variant="standard"
+                                                value={description}
+                                                onChange={handleChangeDescription}
+                                                multiline={true}
+                                                rows={6}
+                                                required
+                                                fullWidth
+                                                placeholder='250 Charecters max'
+                                                inputProps={{ maxLength: 250 }}
+                                            />
+                                        </Grid>
+                                    </Grid>
+                                </Box>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={updateForm}>Done</Button>
+                                <Button onClick={cancelSeasonEdit}>Cancel</Button>
+                            </DialogActions>
+                        </form>
+                    </Dialog>
 
-            <Card sx={{ maxWidth: 345 }}>
-                <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
-                        {seasonName}
-                    </Typography>
-                    <Typography gutterBottom variant="body2" color="text.secondary" sx={{ height: "10rem", overflow: "hidden", textOverflow: "string" }}>
-                        {description}
-                    </Typography>
-                    <Typography variant='subtitle1'>
-                        Duration: {`${startDate.getDate()} ${months[startDate.getMonth()]} - ${endDate.getDate()} ${months[endDate.getMonth()]}`}
-                    </Typography>
-                </CardContent>
-                <CardActions>
-                    <Button
-                        size="small"
-                        onClick={handleClickEdit}
-                    >
-                        Edit
-                    </Button>
-                    <Button
-                        size="small"
-                        color="error"
-                        onClick={handleClickOpenDelete} 
-                    >
-                        Delete
-                    </Button>
-                </CardActions>
-            </Card>
+                    <Card sx={{ maxWidth: 345 }}>
+                        <CardContent>
+                            <Typography 
+                                gutterBottom 
+                                variant="h5" 
+                                component="div">
+                                {seasonName}
+                            </Typography>
+                            <Typography 
+                                gutterBottom 
+                                variant="body2" 
+                                color="text.secondary" 
+                                sx={{ 
+                                    height: "10rem", 
+                                    overflow: "hidden", 
+                                    textOverflow: "string" 
+                                }}
+                            >
+                                {description}
+                            </Typography>
+                            <Typography variant='subtitle1' sx={{ fontWeight: 'bold' }}>
+                                {`${startDate.getDate()} ${months[startDate.getMonth()]} - ${endDate.getDate()} ${months[endDate.getMonth()]}`}
+                            </Typography>
+                        </CardContent>
+                        <CardActions>
+                            <Button
+                                size="small"
+                                onClick={handleClickEdit}
+                            >
+                                Edit
+                            </Button>
+                            <Button
+                                size="small"
+                                color="error"
+                                onClick={handleClickOpenDelete}
+                            >
+                                Delete
+                            </Button>
+                        </CardActions>
+                    </Card>
+                </div>
+            }
         </React.Fragment>
     )
 }
