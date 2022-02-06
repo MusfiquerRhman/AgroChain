@@ -100,7 +100,6 @@ export default function Product(props) {
         setOpenEditPopUp(false);
     };
 
-
     const handleClickOpenDelete = () => {
         setDeleteOpen(true);
     };

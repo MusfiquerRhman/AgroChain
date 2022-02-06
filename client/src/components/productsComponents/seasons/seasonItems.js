@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
+import DialogContentText from '@mui/material/DialogContentText';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import Dialog from '@mui/material/Dialog';
@@ -56,25 +56,37 @@ export default function SeasonsItems(props) {
     let date = new Date()
 
     const startDateString = `${date.getFullYear()}-${startMonth}-${startDay}T00:00:00.000`
-    const startEndString = `${date.getFullYear()}-${endMonth}-${endDay}T00:00:00.000`
+    const endDateString = `${date.getFullYear()}-${endMonth}-${endDay}T00:00:00.000`
 
-    const [seasonName, handleChangeSeasonName] = useInputState(SEASON_NAME);
-    const [description, handleChangeDescription] = useInputState(SEASON_DESCRIPTION);
-
+    const [seasonName, handleChangeSeasonName, setSeasonName] = useInputState(SEASON_NAME);
+    const [description, handleChangeDescription, setSeasonDescription] = useInputState(SEASON_DESCRIPTION);
     const [openEditForm, setOpenEditForm] = useState(false);
+    const [deleteOpen, setDeleteOpen] = useState(false);
     const [startDate, setStartDate] = useState(new Date(startDateString));
-    const [endDate, setEndDate] = useState(new Date(startEndString));
+    const [endDate, setEndDate] = useState(new Date(endDateString));
     const [snakeBarOpen, setSnakeBarOpen] = useState(false);
     const [snakeBarType, setSnakeBarType] = useState("success");
     const [snakeMessage, setSnakeMessage] = useState("");
 
 
     const cancelSeasonEdit = () => {
+        setSeasonName(SEASON_NAME);
+        setSeasonDescription(SEASON_DESCRIPTION);
+        setStartDate(new Date(startDateString));
+        setEndDate(new Date(endDateString));
         setOpenEditForm(false);
     }
 
     const handleClickEdit = () => {
         setOpenEditForm(true);
+    }
+
+    const handleClickOpenDelete = () => {
+        setDeleteOpen(true);
+    }
+
+    const handleCloseDelete = () => {
+        setDeleteOpen(false);
     }
 
     const handleCloseSnakeBar = (event, reason) => {
@@ -90,14 +102,18 @@ export default function SeasonsItems(props) {
             setSnakeBarOpen(true);
             setSnakeBarType("success");
             setSnakeMessage("Successfully updated");
-            window.location.reload()
+            setOpenEditForm(false);
         }
         else {
             setSnakeBarOpen(true);
             setSnakeBarType("error");
             setSnakeMessage("Failed to Update");
+            cancelSeasonEdit();
         }
-        setOpenEditForm(false);
+    }
+
+    const deleteForm = () => {
+        console.log("delete")
     }
 
 
@@ -116,6 +132,28 @@ export default function SeasonsItems(props) {
                     {snakeMessage}
                 </Alert>
             </Snackbar>
+
+            <Dialog
+                    open={deleteOpen}
+                    onClose={handleCloseDelete}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        Are you sure you want to delete?
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            {seasonName}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseDelete}>Cancle</Button>
+                        <Button onClick={deleteForm} autoFocus color="error">
+                            Delete
+                        </Button>
+                    </DialogActions>
+                </Dialog>
 
             <Dialog open={openEditForm} onClose={cancelSeasonEdit} fullWidth={true}>
                 <form>
@@ -210,13 +248,13 @@ export default function SeasonsItems(props) {
             <Card sx={{ maxWidth: 345 }}>
                 <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
-                        {SEASON_NAME}
+                        {seasonName}
                     </Typography>
                     <Typography gutterBottom variant="body2" color="text.secondary" sx={{ height: "10rem", overflow: "hidden", textOverflow: "string" }}>
-                        {SEASON_DESCRIPTION}
+                        {description}
                     </Typography>
                     <Typography variant='subtitle1'>
-                        Duration: {`${SEASON_START_DAY} ${months[SEASON_START_MONTH]} - ${SEASON_END_DAY} ${months[SEASON_END_MONTH]}`}
+                        Duration: {`${startDate.getDate()} ${months[startDate.getMonth()]} - ${endDate.getDate()} ${months[endDate.getMonth()]}`}
                     </Typography>
                 </CardContent>
                 <CardActions>
@@ -229,7 +267,7 @@ export default function SeasonsItems(props) {
                     <Button
                         size="small"
                         color="error"
-                    // onClick={handleClickOpenDelete} 
+                        onClick={handleClickOpenDelete} 
                     >
                         Delete
                     </Button>
