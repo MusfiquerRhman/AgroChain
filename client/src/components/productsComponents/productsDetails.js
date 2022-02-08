@@ -1,5 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {useParams } from 'react-router-dom'
+import { useSnackbar } from 'notistack';
+
 // MaterialUI Elements
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -13,24 +15,18 @@ import FormControl from "@mui/material/FormControl";
 import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
-import Snackbar from '@mui/material/Snackbar';
 import CardHeader from '@mui/material/CardHeader';
-import MuiAlert from '@mui/material/Alert';
 import Skeleton from '@mui/material/Skeleton';
 
 import style from "../../styles/productDetailsStyle"
 import * as userApi from "../../api/users"
 import * as productApi from "../../api/products"
-import { Alert } from '../helper';
-
 
 function ProductDetails() {
+    const { enqueueSnackbar } = useSnackbar();
     const classes = style();
     const { id } = useParams()
     const [value, setValue] = useState("")
-    const [isSnakebarOpen, setIsSnakebarOpen] = useState(false)
-    const [flashMessage, setFlashMEssage] = useState("");
-    const [snakeBarType, setSnakeBarType] = useState("success");
     const [totalPrice, setTotalPrice] = useState("Add to cart");
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [PRODUCT_ID, setProductId] = useState("")
@@ -66,9 +62,7 @@ function ProductDetails() {
                 setProductDetails(res.data.data[0].PRODUCT_DETAILS)
             }
             else {
-                setIsSnakebarOpen(true);
-                setSnakeBarType("error");
-                setFlashMEssage("Server Error! please try again later");
+                enqueueSnackbar("Server Error! please try again later", {variant: 'error'});
             }
         }
         getData();
@@ -85,32 +79,19 @@ function ProductDetails() {
         }
     };
 
-    const handleCloseSnackbar = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setIsSnakebarOpen(false);
-    };
-
     const submitForm = async (e) => {
         if(value > 0) {
             const res = await userApi.addToCart(PRODUCT_ID, value);
             if(res.status === 201){
-                setIsSnakebarOpen(true);
-                setFlashMEssage(`${PRODUCT_NAME_EN} (${PRODUCT_NAME_BN}) Added to cart`);
                 setValue("");
-                setSnakeBarType("success");
+                enqueueSnackbar(`${PRODUCT_NAME_EN} (${PRODUCT_NAME_BN}) Added to cart`, {variant: 'success'});
             }
             else {
-                setIsSnakebarOpen(true);
-                setSnakeBarType("error");
-                setFlashMEssage("Server Error! please try again later");
+                enqueueSnackbar(`Server Error! please try again later`, {variant: 'error'});
             }
         }
         else {
-            setIsSnakebarOpen(true);
-            setSnakeBarType("error");
-            setFlashMEssage("Enter a valid amount");
+            enqueueSnackbar(`Enter a valid amount`, {variant: 'error'});
         }
     }
 
@@ -152,20 +133,6 @@ function ProductDetails() {
 
     return (
         <div>
-            <Snackbar 
-                open={isSnakebarOpen} 
-                autoHideDuration={6000} 
-                onClose={handleCloseSnackbar}
-            >
-                <Alert 
-                    onClose={handleCloseSnackbar} 
-                    severity={snakeBarType} 
-                    sx={{ width: '100%' }}
-                >
-                    {flashMessage}
-                </Alert>
-            </Snackbar>
-
             <Paper elevation={6} > 
                 <div className={classes.form}>
                     <Box sx={{ width: '100%' }}>
@@ -327,3 +294,6 @@ export default ProductDetails;
 // ADD `SEASON_END_DAY` INT,
 // ADD `SEASON_END_MONTH` INT
 // ADD `SEASON_DESCRIPTION` text
+
+// ALTER TABLE products_details ADD addedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+// UPDATE products_details SET addedAt = CURRENT_TIMESTAMP

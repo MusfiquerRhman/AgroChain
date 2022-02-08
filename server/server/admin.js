@@ -16,6 +16,7 @@ router.post("/add", isAdmin, verifyJWT, upload, (req, res) => {
     const addedBy = req.body.addedBy;
     const image = req.file.filename;
     const details = req.body.details;
+    const seasons = req.body.seasons;
     let isAvailable = req.body.isAvailable;
     if (isAvailable) {
         isAvailable = 1;
@@ -32,7 +33,30 @@ router.post("/add", isAdmin, verifyJWT, upload, (req, res) => {
             res.status(500).json({ result });
         }
         else {
-            res.status(201).json({ result });
+            let sql = "SELECT `PRODUCT_ID` FROM `products_details` WHERE ADMIN_ID = ? ORDER BY `ADDED_AT` DESC LIMIT 1"
+            connection.query(sql, [addedBy], (err, productId) => {
+                if (err) {
+                    res.status(500).send();
+                }
+                else {
+                    seasons.map(season => {
+                        let sql = 'INSERT INTO seasons_map (PRODUCT_ID, SEASON_ID) VALUES (?)';
+                        let count = 0;
+                        connection.query(sql, [productId[0], season], (err, result) => {
+                            if (err) {
+                                res.status(201).send();
+                            }
+                            else {
+                                count++;
+                            }
+                        })
+                    })
+                    if (count === seasons.length) {
+                        res.status(200);
+                    }
+                }
+            })
+            res.status(200).json({ result });
         }
     })
 })
@@ -136,7 +160,7 @@ router.post('/season/update/:id', isAdmin, verifyJWT, upload, (req, res) => {
 router.get("/seasonshort", isAdmin, verifyJWT, (req, res) => {
     const sql = "SELECT `SEASON_ID`, `SEASON_NAME` FROM `seasons`";
     connection.query(sql, (err, result) => {
-        if(err){
+        if (err) {
             console.log(err);
             res.status(500).send()
         }

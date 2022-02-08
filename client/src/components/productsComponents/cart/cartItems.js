@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useSnackbar } from 'notistack';
+
 // MaterialUI Elements
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -15,13 +17,13 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import Snackbar from '@mui/material/Snackbar';
 
 import useInputState from "../../../hooks/useInputState"
 import * as userApi from "../../../api/users"
-import {Alert} from "../../helper"
 
 export default function Product(props) {
+    const { enqueueSnackbar } = useSnackbar();
+
     const { CART_ID,
         CART_QUANTITY,
         PRODUCT_NAME_EN,
@@ -37,38 +39,21 @@ export default function Product(props) {
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [cartQuantity, setCartQuantity] = useState(CART_QUANTITY);
     const [isDeleted, setIsDeleted] = useState(false);
-    const [snakeBarOpen, setSnakeBarOpen] = useState(false);
-    const [snakeBarType, setSnakeBarType] = useState("success");
-    const [snakeMessage, setSnakeMessage] = useState("");
-
-    const handleCloseSnakeBar = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setSnakeBarOpen(false);
-    };
 
     const updateForm = async () => {
         if (quantity <= 0) {
-            setSnakeBarOpen(true);
-            setSnakeBarType("error");
-            setSnakeMessage("Quantity must be greater than 0");
+            enqueueSnackbar("Quantity must be greater than 0", {variant: 'error'})
         }
         else {
             const res = await userApi.updateCart(CART_ID, quantity);
             if (res.status === 200) {
                 setCartQuantity(quantity);
-                setSnakeBarOpen(true);
-                setSnakeBarType("success");
-                setSnakeMessage("Successfully updated");
-
+                enqueueSnackbar("Successfully updated", {variant: 'info'})
                 const changedValue = (cartQuantity - quantity) * (PRODUCT_AGRO_PRICE - (PRODUCT_AGRO_PRICE * PRODUCT_DISCOUNT /100))
                 props.updatePrice(changedValue)
             }
             else {
-                setSnakeBarOpen(true);
-                setSnakeBarType("error");
-                setSnakeMessage("Failed to Update");
+                enqueueSnackbar("Failed to Update", {variant: 'error'})
             }
             setOpenEditPopUp(false);
         }
@@ -77,17 +62,13 @@ export default function Product(props) {
     const deleteForm = async () => {
         const res = await userApi.deleteCart(CART_ID);
         if (res.status === 200) {
-            setSnakeBarOpen(true);
-            setSnakeBarType("success");
-            setSnakeMessage("Successfully Deleted");
+            enqueueSnackbar("Successfully Deleted", {variant: 'info'})
             const changedValue = cartQuantity * (PRODUCT_AGRO_PRICE - (PRODUCT_AGRO_PRICE * PRODUCT_DISCOUNT /100))
             setIsDeleted(true);
             props.updatePrice(changedValue)
         }
         else {
-            setSnakeBarOpen(true);
-            setSnakeBarType("error");
-            setSnakeMessage("Failed to Deleted");
+            enqueueSnackbar("Failed to Deleted", {variant: 'error'})
         }
         setDeleteOpen(false);
     }
@@ -112,20 +93,6 @@ export default function Product(props) {
         <div>
             {!isDeleted && (
                 <div>
-                <Snackbar
-                    open={snakeBarOpen}
-                    autoHideDuration={6000}
-                    onClose={handleCloseSnakeBar}
-                >
-                    <Alert
-                        onClose={handleCloseSnakeBar}
-                        severity={snakeBarType}
-                        sx={{ width: '100%' }}
-                    >
-                        {snakeMessage}
-                    </Alert>
-                </Snackbar>
-
                 <Dialog
                     open={openEditPopUp}
                     onClose={handleClose}

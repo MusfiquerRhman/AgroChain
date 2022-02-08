@@ -1,36 +1,25 @@
 import React, {useState, useEffect} from 'react'
 import {useSelector} from 'react-redux'
+import { useSnackbar } from 'notistack';
 // MaterialUI Elements
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
-import Snackbar from '@mui/material/Snackbar';
 import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
 
 import CartItems from './cartItems'
 import * as userApi from "../../../api/users"
 import style from "../../../styles/cartStyles"
-import {Alert} from "../../helper"
 
 export default function CartList({products}) {
     const classes = style();
+    const { enqueueSnackbar } = useSnackbar();
     const users = useSelector((state) => state.users);
-
-    const [snakeBarOpen, setSnakeBarOpen] = useState(false);
-    const [snakeBarType, setSnakeBarType] = useState("success");
-    const [snakeMessage, setSnakeMessage] = useState("");
 
     let disableButton = products.length === 0 ? true : false;
     let buttonText = disableButton ? "List empty" : "Place Order"
     let buttonIcon = disableButton ? (<RemoveShoppingCartIcon />) : (<DoneAllIcon />);
-
-    const handleCloseSnakeBar = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setSnakeBarOpen(false);
-    };
 
     const setPrice = () => {
         let price = 0;
@@ -57,28 +46,15 @@ export default function CartList({products}) {
 
         const res = await userApi.submitCart(users.userId);
         if(res.status === 200){
-            setSnakeBarOpen(true);
-            setSnakeBarType("success");
-            setSnakeMessage("Order Successfully submitted")
+            enqueueSnackbar("Order Successfully submitted", {variant: 'success'})
+        }
+        else {
+            enqueueSnackbar("Order Failed submitted", {variant: 'error'})
         }
     }
 
     return (
         <div>
-            <Snackbar 
-                open={snakeBarOpen} 
-                autoHideDuration={6000} 
-                onClose={handleCloseSnakeBar}
-            >
-                <Alert 
-                    onClose={handleCloseSnakeBar} 
-                    severity={snakeBarType} 
-                    sx={{ width: '100%' }}
-                >
-                    {snakeMessage}
-                </Alert>
-            </Snackbar>
-
             <Paper elevation={0} className={classes.cartHeaderBox}>
                 <h1 className={classes.cartHeading}>
                     Items in your cart

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-
+import { useSnackbar } from 'notistack';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -7,7 +7,6 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import Snackbar from '@mui/material/Snackbar';
 import DialogContentText from '@mui/material/DialogContentText';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
@@ -20,10 +19,10 @@ import Box from '@mui/material/Box';
 
 import * as adminApi from "../../../api/admin"
 import useInputState from "../../../hooks/useInputState"
-import { Alert } from "../../helper"
 
 export default function SeasonsItems(props) {
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const { enqueueSnackbar } = useSnackbar();
 
     const {
         SEASON_DESCRIPTION,
@@ -65,10 +64,6 @@ export default function SeasonsItems(props) {
     const [isDeleted, setIsDeleted] = useState(false);
     const [startDate, setStartDate] = useState(new Date(startDateString));
     const [endDate, setEndDate] = useState(new Date(endDateString));
-    const [snakeBarOpen, setSnakeBarOpen] = useState(false);
-    const [snakeBarType, setSnakeBarType] = useState("success");
-    const [snakeMessage, setSnakeMessage] = useState("");
-
 
     const cancelSeasonEdit = () => {
         setSeasonName(SEASON_NAME);
@@ -90,25 +85,14 @@ export default function SeasonsItems(props) {
         setDeleteOpen(false);
     }
 
-    const handleCloseSnakeBar = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setSnakeBarOpen(false);
-    };
-
     const updateForm = async () => {
         const res = await adminApi.updateSeasons(seasonName, startDate.getDate(), startDate.getMonth(), endDate.getDate(), endDate.getMonth(), description, SEASON_ID)
         if (res.status === 200) {
-            setSnakeBarOpen(true);
-            setSnakeBarType("success");
-            setSnakeMessage("Successfully updated");
+            enqueueSnackbar(`Successfully updated`, {variant: 'info'});
             setOpenEditForm(false);
         }
         else {
-            setSnakeBarOpen(true);
-            setSnakeBarType("error");
-            setSnakeMessage("Failed to Update");
+            enqueueSnackbar(`Failed to Update`, {variant: 'error'});
             cancelSeasonEdit();
         }
     }
@@ -116,15 +100,11 @@ export default function SeasonsItems(props) {
     const deleteForm = async () => {
         const res = await adminApi.deleteSeasons(SEASON_ID);
         if (res.status === 200) {
-            setSnakeBarOpen(true);
-            setSnakeBarType("success");
-            setSnakeMessage("Successfully Deleted");
+            enqueueSnackbar(`Successfully Deleted`, {variant: 'info'});
             setIsDeleted(true);
         }
         else {
-            setSnakeBarOpen(true);
-            setSnakeBarType("error");
-            setSnakeMessage("Failed to Delete");
+            enqueueSnackbar(`Failed to Delete`, {variant: 'error'});
         }
         setDeleteOpen(false);
     }
@@ -133,20 +113,6 @@ export default function SeasonsItems(props) {
         <React.Fragment>
             {!isDeleted &&
                 <div>
-                    <Snackbar
-                        open={snakeBarOpen}
-                        autoHideDuration={6000}
-                        onClose={handleCloseSnakeBar}
-                    >
-                        <Alert
-                            onClose={handleCloseSnakeBar}
-                            severity={snakeBarType}
-                            sx={{ width: '100%' }}
-                        >
-                            {snakeMessage}
-                        </Alert>
-                    </Snackbar>
-
                     <Dialog
                         open={deleteOpen}
                         onClose={handleCloseDelete}
