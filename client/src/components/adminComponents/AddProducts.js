@@ -152,7 +152,7 @@ function AddProducts() {
         if(seasonList.find(season => season.seasonId === seasonId) === undefined){
             seasonList.push({seasonId, seasonName});
             enqueueSnackbar(`Season ${seasonName} Added`, { 
-                variant: 'success',
+                variant: 'info',
             });
             setAllSelectedSeasons(seasonList);
         }
@@ -166,7 +166,7 @@ function AddProducts() {
     const deleteSeason = (id, seasonName) => {
         let seasonList = allSelectedSeasons.filter(season => season.seasonId !== id);
         enqueueSnackbar(`Season ${seasonName} Deleted`, { 
-            variant: 'info',
+            variant: 'default',
         });
         setAllSelectedSeasons(seasonList);
     }
@@ -204,13 +204,13 @@ function AddProducts() {
 
     let imageSelectedMsg = <Typography variant="h4" className={classes.imagetext}>Select an Image</Typography>
     if (displayImage !== "") {
-        imageSelectedMsg = <img src={displayImage} className={classes.image} />
+        imageSelectedMsg = <img src={displayImage} className={classes.image}/>
     }
 
     return (
         <div>
             {isAdmin &&
-                (<Paper elevation={6} >
+                (<Paper elevation={6} sx={{ width: '100%' }}>
                     <form className={classes.form}>
                         <Typography variant="h3">
                             Enter product details
@@ -316,15 +316,15 @@ function AddProducts() {
                                         direction="row"
                                         justifyContent="space-between">
                                         <Grid item>
-                                        <Stack direction="row" spacing={1}>
-                                            {allSelectedSeasons.map(season => {
-                                                return <Chip color="primary" key={season.seasonId} label={season.seasonName} onDelete={() => deleteSeason(season.seasonId, season.seasonName)} />
-                                            })}
-                                        </Stack>
-
+                                            <Stack direction="row" spacing={1}>
+                                                {allSelectedSeasons.map(season => {
+                                                    return <Chip color="primary" key={season.seasonId} label={season.seasonName} onDelete={() => deleteSeason(season.seasonId, season.seasonName)} />
+                                                })}
+                                            </Stack>
                                         </Grid>
-                                        <Grid item>
+                                        <Grid item lg={5} md={4} sm={6}  xs={12}>
                                             <Button
+                                                fullWidth
                                                 id="demo-positioned-button"
                                                 aria-controls={openSeason ? 'demo-positioned-menu' : undefined}
                                                 aria-haspopup="true"
@@ -351,7 +351,14 @@ function AddProducts() {
                                                 }}
                                             >
                                                 {allSeasons.map((season) => {
-                                                    return <MenuItem onClick={handleCloseSeason} key={season.SEASON_ID} onClick={() => addSeason(season.SEASON_ID, season.SEASON_NAME) }>{season.SEASON_NAME}</MenuItem>
+                                                    return <MenuItem 
+                                                                onClick={handleCloseSeason} 
+                                                                key={season.SEASON_ID} 
+                                                                onClick={() => addSeason(season.SEASON_ID, season.SEASON_NAME) }
+                                                                sx={{width: "25%"}}
+                                                            >
+                                                                {season.SEASON_NAME}
+                                                            </MenuItem>
                                                 })
                                                 /* <MenuItem onClick={handleClose}>Profile</MenuItem>
                                                 <MenuItem onClick={handleClose}>My account</MenuItem>
@@ -365,7 +372,15 @@ function AddProducts() {
                                         direction="row"
                                         justifyContent="space-between">
                                         <Grid item>
+                                            <Stack direction="row" spacing={1}>
+                                                {/* {allSelectedSeasons.map(season => {
+                                                    return <Chip color="primary" key={season.seasonId} label={season.seasonName} onDelete={() => deleteSeason(season.seasonId, season.seasonName)} />
+                                                })} */}
+                                            </Stack>
+                                        </Grid>
+                                        <Grid item lg={5} md={4} sm={6} xs={12}>
                                             <Button
+                                                fullWidth
                                                 id="demo-positioned-button"
                                                 aria-controls={openTag ? 'demo-positioned-menu' : undefined}
                                                 aria-haspopup="true"

@@ -39,24 +39,23 @@ router.post("/add", isAdmin, verifyJWT, upload, (req, res) => {
                     res.status(500).send();
                 }
                 else {
+                    let count = 0;
                     seasons.map(season => {
-                        let sql = 'INSERT INTO seasons_map (PRODUCT_ID, SEASON_ID) VALUES (?)';
-                        let count = 0;
-                        connection.query(sql, [productId[0], season], (err, result) => {
+                        let sql = 'INSERT INTO seasons_map (PRODUCT_ID, SEASON_ID) VALUES (?, ?)';
+                        connection.query(sql, [productId[0].PRODUCT_ID, season], (err, result) => {
                             if (err) {
                                 res.status(201).send();
                             }
                             else {
                                 count++;
+                                if (count === seasons.length) {
+                                    res.status(200).send();
+                                }
                             }
                         })
                     })
-                    if (count === seasons.length) {
-                        res.status(200);
-                    }
                 }
             })
-            res.status(200).json({ result });
         }
     })
 })
