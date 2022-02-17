@@ -14,6 +14,7 @@ import Login from './components/userComponents/login'
 import Registration from './components/userComponents/registration'
 import Cart from './components/productsComponents/cart/cart'
 import Seasons from './components/productsComponents/seasons/seasons'
+import Tags from './components/productsComponents/tags/tags';
 
 const App = () => {
     const dispatch = useDispatch();
@@ -36,6 +37,7 @@ const App = () => {
                                 <Route exact path='/user/cart' element={<Cart />} />
                                 <Route exact path='/avater/addproducts' element={<AddProducts />} />
                                 <Route exact path='/avater/seasons' element={<Seasons />} />
+                                <Route exact path='/avater/tags' element={<Tags />} />
                             </Routes >
                         </Grid>
                     </Grid>

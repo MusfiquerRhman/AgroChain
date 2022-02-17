@@ -17,6 +17,7 @@ router.post("/add", isAdmin, verifyJWT, upload, (req, res) => {
     const image = req.file.filename;
     const details = req.body.details;
     const seasons = req.body.seasons;
+    const tags = req.body.tags;
     let isAvailable = req.body.isAvailable;
     if (isAvailable) {
         isAvailable = 1;
@@ -39,17 +40,30 @@ router.post("/add", isAdmin, verifyJWT, upload, (req, res) => {
                     res.status(500).send();
                 }
                 else {
-                    let count = 0;
+                    let seasonCount = 0, tagscount = 0;
                     seasons.map(season => {
                         let sql = 'INSERT INTO seasons_map (PRODUCT_ID, SEASON_ID) VALUES (?, ?)';
                         connection.query(sql, [productId[0].PRODUCT_ID, season], (err, result) => {
                             if (err) {
-                                res.status(201).send();
+                                res.status(201).send("seasons");
                             }
                             else {
-                                count++;
-                                if (count === seasons.length) {
-                                    res.status(200).send();
+                                seasonCount++;
+                                if (seasonCount === seasons.length) {
+                                    tags.map(tag => {
+                                        let sql = "INSERT INTO tags_map (`TAG_ID`, `PRODUCT_ID`) VALUES (?, ?)";
+                                        connection.query(sql, [productId[0].PRODUCT_ID, tag], (err, result) => {
+                                            if(err){
+                                                res.status(201).send();
+                                            }
+                                            else {
+                                                tagscount++;
+                                                if(tagscount === tags.length){
+                                                    res.status(200).send("tags");
+                                                }
+                                            }
+                                        })
+                                    })
                                 }
                             }
                         })
@@ -118,7 +132,7 @@ router.get('/season', isAdmin, verifyJWT, (req, res) => {
     })
 })
 
-router.post('/season/delete/:id', isAdmin, verifyJWT, (req, res) => {
+router.delete('/season/:id', isAdmin, verifyJWT, (req, res) => {
     const seasonId = req.params.id;
     let sql = "DELETE FROM seasons WHERE SEASON_ID = ?"
 
@@ -134,7 +148,7 @@ router.post('/season/delete/:id', isAdmin, verifyJWT, (req, res) => {
 })
 
 
-router.post('/season/update/:id', isAdmin, verifyJWT, upload, (req, res) => {
+router.put('/season/:id', isAdmin, verifyJWT, upload, (req, res) => {
     const id = req.params.id;
     const seasonName = req.body.seasonName;
     const startDay = req.body.startDay;
@@ -168,5 +182,63 @@ router.get("/seasonshort", isAdmin, verifyJWT, (req, res) => {
         }
     })
 })
+
+
+router.get("/tags", isAdmin, verifyJWT, upload, (req, res) => {
+    const sql = "SELECT `TAG_ID`,`TAG_NAME`,`TAG_DESCRIPTION` FROM tags";
+    connection.query(sql, (err, result) => {
+        if(err){
+            res.send(500).send();
+        }
+        else{
+            res.status(200).send(result);
+        }
+    })
+})
+
+
+router.post("/tags", isAdmin, verifyJWT, upload, (req, res) => {
+    const tagName = req.body.tagName;
+    const tagDescription = req.body.tagDescription;
+    const sql = "INSERT INTO tags (`TAG_NAME`, `TAG_DESCRIPTION`) VALUES (?, ?)";
+    connection.query(sql, [tagName, tagDescription], (err, result) => {
+        if(err){
+            res.status(500).send();
+        }
+        else {
+            res.status(200).send();
+        }
+    })
+})
+
+
+router.put("/tags/:id", isAdmin, verifyJWT, upload, (req, res) => {
+    const tagName = req.body.tagName;
+    const tagDescription = req.body.tagDescription;
+    const tagId = req.params.id;
+    const sql = "UPDATE tags SET TAG_NAME = ?, TAG_DESCRIPTION = ? WHERE TAG_ID = ?";
+    connection.query(sql, [tagName, tagDescription, tagId], (err, result) => {
+        if(err){
+            res.status(500).send();
+        }
+        else{
+            res.status(200).send();
+        }
+    })
+})
+
+router.delete("/tags/:id", isAdmin, verifyJWT, upload, (req, res) => {
+    const tagId = req.params.id;
+    const sql = "DELETE from tags WHERE `TAG_ID` = ?";
+    connection.query(sql, [tagId], (err, results) => {
+        if(err){
+            res.status(500).send();
+        }
+        else{
+            res.status(200).send();
+        }
+    })
+})
+
 
 export default router;

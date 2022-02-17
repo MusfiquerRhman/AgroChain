@@ -1,51 +1,43 @@
 import React, { useState } from 'react'
 import { useSnackbar } from 'notistack';
-
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DatePicker from '@mui/lab/DatePicker';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-
-import SeasonList from "./seasonsList"
 import style from "../../../styles/seasonsStyles"
 import useInputState from '../../../hooks/useInputState';
 import * as adminApi from '../../../api/admin'
+import Typography from '@mui/material/Typography';
+import TagsList from "./tagsList"
 
-// const minDate = new Date('2022-01-01T00:00:00.000');
-// const maxDate = new Date('2100-01-01T00:00:00.000');
-
-function Season() {
+function Tags(){
     const classes = style();
     const { enqueueSnackbar } = useSnackbar();
 
     const [openAddForm, setOpenAddForm] = useState(false);
-    const [seasonName, handleChangeSeasonName] = useInputState("");
+    const [tagName, handleChangeTagName] = useInputState("");
     const [description, handleChangeDescription] = useInputState("");
-    const [startDate, setStartDate] = useState(new Date());
-    const [endDate, setEndDate] = useState(new Date());
 
     const openForm = () => {
         setOpenAddForm(true);
     }
 
-    const cancelSeason = () => {
+    const canceltagDialog = () => {
         setOpenAddForm(false);
     }
 
     const submitForm = async (e) => {
         e.preventDefault();
-        let response = await adminApi.addSeason(seasonName, startDate.getDate(), startDate.getMonth(), endDate.getDate(), endDate.getMonth(), description);
+
+        let response = await adminApi.addTags(tagName, description);
+        console.log(response.status)
         if (response.status === 200) {
-            enqueueSnackbar(`${seasonName} Season added`, {variant: 'success'});
+            enqueueSnackbar(`${tagName} tag added`, {variant: 'success'});
             window.location.reload();
         }
         else {
@@ -55,7 +47,7 @@ function Season() {
 
     return (
         <div>
-            <h1>Seasons</h1>
+            <h1>Tags</h1>
             <Box sx={{ width: '100%', marginTop: "2rem", marginBottom: "2rem" }}>
                 {openAddForm === false && (
                     <Grid container
@@ -68,17 +60,17 @@ function Season() {
                             disabled={openAddForm}
                             sx={{ width: "25%", minWidth: "270px" }}
                         >
-                            Add a new season
+                            Add a new Tag
                         </Button>
                     </Grid>
                 )}
 
-                <Dialog open={openAddForm} onClose={cancelSeason}>
+                <Dialog open={openAddForm} onClose={canceltagDialog}>
                     <form>
-                        <DialogTitle>Add Season</DialogTitle>
+                        <DialogTitle>Add a Tag</DialogTitle>
                         <DialogContent>
                             <DialogContentText>
-                                To add a new season, enter the name of the season and select the start and end date of the season. year dosen't matter, select the month and date.
+                                Add a Tag to descride product qualities like fresh, organic, etc.
                             </DialogContentText>
                             <Box sx={{ width: '100%' }}>
                                 <Grid container
@@ -90,10 +82,10 @@ function Season() {
                                 >
                                     <Grid item sx={{ width: "100%" }}>
                                         <TextField id="registration-name"
-                                            label="Season Name"
+                                            label="Tag Name"
                                             variant="standard"
-                                            value={seasonName}
-                                            onChange={handleChangeSeasonName}
+                                            value={tagName}
+                                            onChange={handleChangeTagName}
                                             required
                                             sx={{
                                                 width: "100%",
@@ -101,49 +93,6 @@ function Season() {
                                                 marginTop: "1rem"
                                             }}
                                         />
-                                    </Grid>
-                                    <Grid item sx={{ width: "100%" }}>
-                                        <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                            <DatePicker
-                                                openTo="month"
-                                                views={['month', 'day']}
-                                                label="Select when the season starts"
-                                                value={startDate}
-                                                onChange={(newValue) => {
-                                                    setStartDate(newValue);
-                                                }}
-                                                renderInput={(params) =>
-                                                    <TextField {...params}
-                                                        helperText={null}
-                                                        sx={{
-                                                            width: "100%",
-                                                            minWidth: "270px",
-                                                            marginBottom: "0.5rem",
-                                                            marginTop: "0.5rem"
-                                                        }}
-                                                    />
-                                                }
-                                            />
-                                        </LocalizationProvider>
-                                    </Grid>
-                                    <Grid item sx={{ width: "100%" }}>
-                                        <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                            <DatePicker
-                                                openTo="month"
-                                                views={['month', 'day']}
-                                                label="Select when the season Ends"
-                                                value={endDate}
-                                                onChange={(newValue) => {
-                                                    setEndDate(newValue);
-                                                }}
-                                                renderInput={(params) =>
-                                                    <TextField {...params}
-                                                        helperText={null}
-                                                        sx={{ width: "100%", minWidth: "270px" }}
-                                                    />
-                                                }
-                                            />
-                                        </LocalizationProvider>
                                     </Grid>
                                     <Grid item sx={{ width: "100%" }}>
                                         <TextField id="registration-description"
@@ -168,22 +117,23 @@ function Season() {
                             </Box>
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={submitForm}>Add</Button>
-                            <Button onClick={cancelSeason}>Cancel</Button>
+                            <Button type="submit" onClick={submitForm}>Add</Button>
+                            <Button onClick={canceltagDialog}>Cancel</Button>
                         </DialogActions>
                     </form>
                 </Dialog>
             </Box>
 
-            <SeasonList />
+            <TagsList />
 
             <Typography variant="h6" component="div" gutterBottom className={classes.heading} textAlign="center">
-                We had joy, we had fun, we had seasons in the sun. <br></br>
-                But the hills that we climbed were just seasons out of time.
+                Friends don't let friends use 
+                <span style={{color: "#006B63"}}> #too </span>
+                <span style={{color: "#006B63"}}>#many </span>
+                <span style={{color: "#006B63"}}>#hashtags</span>
             </Typography>
         </div>
     )
 }
 
-export default Season;
-
+export default Tags;

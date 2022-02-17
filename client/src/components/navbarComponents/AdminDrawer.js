@@ -176,7 +176,7 @@ export default function AdminDrawer({handleDrawerClose, open}){
 						component="div"
 						sx={{ display: { sm: 'block' } }}
 					>
-						<Link to="/" >Tags</Link>
+						<Link to="/avater/tags" >Tags</Link>
 					</Typography>
 				</ListItem>
 			</List>

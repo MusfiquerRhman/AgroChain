@@ -297,3 +297,15 @@ export default ProductDetails;
 
 // ALTER TABLE products_details ADD addedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 // UPDATE products_details SET addedAt = CURRENT_TIMESTAMP
+
+// CREATE TABLE tags (
+// 	TAG_ID varchar(38) PRIMARY KEY DEFAULT UUID(),
+//     TAG_NAME varchar(15) NOT NULL,
+//     TAG_DESCRIPTION text NOT NULL
+// )
+
+// CREATE TABLE tags_map (
+// 	TAG_ID varchar(38),
+//     PRODUCT_ID varchar(38),
+//     PRIMARY KEY (TAG_ID, PRODUCT_ID)
+// )

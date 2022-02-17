@@ -50,7 +50,7 @@ export const logout = async () => {
         localStorage.removeItem("userPhone");
         localStorage.removeItem("keyboardCat");
         localStorage.removeItem("userJoinDate");
-        return await axios.post(`${API_URL}/logout`);
+        return await axios.get(`${API_URL}/logout`);
     }
     catch(err){
         return -1;
@@ -95,7 +95,7 @@ export const updateCart = async (CART_ID, quantity) => {
         const formdata = new FormData();
         formdata.append("quantity", quantity);
 
-        return await authAxios.post(`${API_URL}/cart/update/${CART_ID}`, formdata);
+        return await authAxios.put(`${API_URL}/cart/${CART_ID}`, formdata);
     }
     catch(err){
         return -1;
@@ -104,7 +104,7 @@ export const updateCart = async (CART_ID, quantity) => {
 
 export const deleteCart = async(CART_ID) => {
     try{
-        return await authAxios.get(`${API_URL}/cart/delete/${CART_ID}`);
+        return await authAxios.delete(`${API_URL}/cart/${CART_ID}`);
     }
     catch(err){
         return -1;

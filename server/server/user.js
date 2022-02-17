@@ -143,7 +143,7 @@ router.post("/login", upload, async (req, res) => {
 })
 
 
-router.post("/logout", isLoggedIn, (req, res) => {
+router.get("/logout", isLoggedIn, (req, res) => {
     req.session.destroy();
     res.status(200).send();
 })
@@ -184,7 +184,7 @@ router.post("/cart", isLoggedIn, verifyJWT, upload, (req, res) => {
     })
 })
 
-router.post("/cart/update/:id", isLoggedIn, verifyJWT, upload, (req, res) => {
+router.put("/cart/:id", isLoggedIn, verifyJWT, upload, (req, res) => {
     const cartId = req.params.id;
     const quantity = req.body.quantity;
     let sql = "UPDATE cart_details SET CART_QUANTITY = ? WHERE CART_ID = ?";
@@ -198,7 +198,7 @@ router.post("/cart/update/:id", isLoggedIn, verifyJWT, upload, (req, res) => {
     })
 })
 
-router.get("/cart/delete/:id", isLoggedIn, verifyJWT, upload, (req, res) => {
+router.delete("/cart/:id", isLoggedIn, verifyJWT, upload, (req, res) => {
     const cartId = req.params.id;
     let sql = `DELETE FROM cart_details WHERE CART_ID = ?`;
     connection.query(sql, [cartId], (err, results) => {
