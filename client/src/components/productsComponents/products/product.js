@@ -18,8 +18,8 @@ import Paper from '@mui/material/Paper';
 import CardHeader from '@mui/material/CardHeader';
 import CardActionArea from '@mui/material/CardActionArea';
 
-import style from "../../styles/productStyle"
-import * as userApi from "../../api/users"
+import style from "../../../styles/productStyle"
+import * as userApi from "../../../api/users"
 
 export default function Product(props) {
     const { enqueueSnackbar } = useSnackbar();

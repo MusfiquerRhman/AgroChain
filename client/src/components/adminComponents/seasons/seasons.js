@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSnackbar } from 'notistack';
-
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
@@ -19,7 +18,7 @@ import SeasonList from "./seasonsList"
 import style from "../../../styles/seasonsStyles"
 import useInputState from '../../../hooks/useInputState';
 import * as adminApi from '../../../api/admin'
-
+import * as productsApi from "../../../api/products"
 // const minDate = new Date('2022-01-01T00:00:00.000');
 // const maxDate = new Date('2100-01-01T00:00:00.000');
 
@@ -33,6 +32,16 @@ function Season() {
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
 
+    const [allSeasons, setAllSeasons] = useState([]);
+
+    useEffect(() => {
+        async function getData() {
+            const seasons = await productsApi.getAllSeasons();
+            setAllSeasons(seasons.data.result);
+        }
+        getData();
+    }, [])
+
     const openForm = () => {
         setOpenAddForm(true);
     }
@@ -43,7 +52,7 @@ function Season() {
 
     const submitForm = async (e) => {
         e.preventDefault();
-        let response = await adminApi.addSeason(seasonName, startDate.getDate(), startDate.getMonth(), endDate.getDate(), endDate.getMonth(), description);
+        let response = await adminApi.addSeason(seasonName, startDate, endDate, description);
         if (response.status === 200) {
             enqueueSnackbar(`${seasonName} Season added`, {variant: 'success'});
             window.location.reload();
@@ -175,12 +184,7 @@ function Season() {
                 </Dialog>
             </Box>
 
-            <SeasonList />
-
-            <Typography variant="h6" component="div" gutterBottom className={classes.heading} textAlign="center">
-                We had joy, we had fun, we had seasons in the sun. <br></br>
-                But the hills that we climbed were just seasons out of time.
-            </Typography>
+            <SeasonList seasons={[allSeasons]}/>
         </div>
     )
 }

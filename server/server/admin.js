@@ -52,7 +52,7 @@ router.post("/add", isAdmin, verifyJWT, upload, (req, res) => {
                                 if (seasonCount === seasons.length) {
                                     tags.map(tag => {
                                         let sql = "INSERT INTO tags_map (`TAG_ID`, `PRODUCT_ID`) VALUES (?, ?)";
-                                        connection.query(sql, [productId[0].PRODUCT_ID, tag], (err, result) => {
+                                        connection.query(sql, [tag, productId[0].PRODUCT_ID], (err, result) => {
                                             if(err){
                                                 res.status(201).send();
                                             }
@@ -98,15 +98,13 @@ router.get('/orders', isAdmin, verifyJWT, (req, res) => {
 
 
 router.post('/season', upload, isAdmin, verifyJWT, (req, res) => {
-    let sql = `INSERT INTO seasons (SEASON_NAME,SEASON_START_DAY,SEASON_START_MONTH,SEASON_END_DAY,SEASON_END_MONTH,SEASON_DESCRIPTION) VALUES (?, ?, ?, ?, ?, ?)`
+    let sql = `INSERT INTO seasons (SEASON_NAME, SEASON_START_DATE, SEASON_END_DATE, SEASON_DESCRIPTION) VALUES (?, ?, ?, ?)`
     let seasonName = req.body.seasonName;
-    let startDay = req.body.startDay;
-    let endDay = req.body.endDay;
-    let startMonth = req.body.startMonth;
-    let endMonth = req.body.endMonth;
+    let startDate = req.body.startDate;
+    let endDate = req.body.endDate;
     let description = req.body.description;
 
-    connection.query(sql, [seasonName, startDay, startMonth, endDay, endMonth, description], (err, result) => {
+    connection.query(sql, [seasonName, startDate, endDate, description], (err, result) => {
         if (err) {
             console.log(err)
             res.status(500).send();
@@ -117,20 +115,6 @@ router.post('/season', upload, isAdmin, verifyJWT, (req, res) => {
     })
 })
 
-
-router.get('/season', isAdmin, verifyJWT, (req, res) => {
-    let sql = `SELECT * FROM seasons`;
-
-    connection.query(sql, (err, result) => {
-        if (err) {
-            console.log(err);
-            res.status(500).send();
-        }
-        else {
-            res.status(200).json({ result })
-        }
-    })
-})
 
 router.delete('/season/:id', isAdmin, verifyJWT, (req, res) => {
     const seasonId = req.params.id;
@@ -151,15 +135,13 @@ router.delete('/season/:id', isAdmin, verifyJWT, (req, res) => {
 router.put('/season/:id', isAdmin, verifyJWT, upload, (req, res) => {
     const id = req.params.id;
     const seasonName = req.body.seasonName;
-    const startDay = req.body.startDay;
-    const endDay = req.body.endDay;
-    const startMonth = req.body.startMonth;
-    const endMonth = req.body.endMonth;
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
     const description = req.body.description;
 
-    const sql = "UPDATE seasons SET SEASON_NAME = ?, SEASON_START_DAY = ?, SEASON_START_MONTH = ?, SEASON_END_DAY = ?, SEASON_END_MONTH = ?, SEASON_DESCRIPTION = ? WHERE SEASON_ID = ?";
+    const sql = "UPDATE seasons SET SEASON_NAME = ?, SEASON_START_DATE = ?, SEASON_END_DATE = ?, SEASON_DESCRIPTION = ? WHERE SEASON_ID = ?";
 
-    connection.query(sql, [seasonName, startDay, startMonth, endDay, endMonth, description, id], (err, result) => {
+    connection.query(sql, [seasonName, startDate, endDate, description, id], (err, result) => {
         if (err) {
             console.log(err);
             res.status(500).send();
@@ -169,6 +151,7 @@ router.put('/season/:id', isAdmin, verifyJWT, upload, (req, res) => {
         }
     })
 })
+
 
 router.get("/seasonshort", isAdmin, verifyJWT, (req, res) => {
     const sql = "SELECT `SEASON_ID`, `SEASON_NAME` FROM `seasons`";

@@ -1,6 +1,3 @@
-import React from 'react';
-import MuiAlert from '@mui/material/Alert';
-
 export const clearLocalStorageDate = () => {
     localStorage.removeItem("userEmail");
     localStorage.removeItem("userPhone");

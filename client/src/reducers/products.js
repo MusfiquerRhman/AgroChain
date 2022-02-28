@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default (products = [] , action) => {
     switch(action.type){
         case 'ALL_PRODUCTS':
@@ -6,3 +7,4 @@ export default (products = [] , action) => {
             return products;
     }
 }
+

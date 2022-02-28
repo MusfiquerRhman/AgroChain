@@ -1,5 +1,4 @@
 import axios from "axios";
-import { authAxios } from "../helper";
 const API_URL = 'http://localhost:5000/api/products'
 
 axios.defaults.withCredentials = true
@@ -18,6 +17,15 @@ export const productDetails = async (id) => {
         return await axios.get(`${API_URL}/${id}`);
     }
     catch(err){
+        return -1;
+    }
+}
+
+export const getAllSeasons = async () => {
+    try {
+        return await axios.get(`${API_URL}/season`)
+    }
+    catch (err) {
         return -1;
     }
 }

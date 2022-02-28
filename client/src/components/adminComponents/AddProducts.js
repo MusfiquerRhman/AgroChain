@@ -514,7 +514,7 @@ function AddProducts() {
                                     </Grid>
                                     <Grid item>
                                         <FormControlLabel
-                                            label="Make available in products page and search results"
+                                            label="Enable: Make available in products page and search results"
                                             control={
                                                 <Checkbox
                                                     checked={isAvailable}

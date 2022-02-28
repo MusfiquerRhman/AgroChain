@@ -1,20 +1,14 @@
 import React, { useEffect, useState } from 'react'
 // MaterialUI Elements
 import Grid from '@mui/material/Grid';
-
-import * as adminApi from "../../../api/admin"
 import SeasonsItems from './seasonItems';
 
-export default function SeasonsList() {
+export default function SeasonsList(seasons) {
     const [allSeasons, setAllSeasons] = useState([]);
 
     useEffect(() => {
-        async function getData() {
-            const seasons = await adminApi.getAllSeasons();
-            setAllSeasons(seasons.data.result);
-        }
-        getData();
-    }, [])
+        setAllSeasons(seasons.seasons[0])
+    }, [seasons])
 
     return (
         <Grid container spacing={3}>
@@ -27,7 +21,7 @@ export default function SeasonsList() {
                     xl={3}
                     key={season.SEASON_ID}
                 >
-                    <SeasonsItems {...season} key={season.SEASON_ID} />
+                    <SeasonsItems {...season} key={season.SEASON_ID}/>
                 </Grid>
             ))}
         </Grid>

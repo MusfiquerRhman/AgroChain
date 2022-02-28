@@ -6,6 +6,20 @@ import connection from '../database/model.js';
 import upload from "../Helpers/File.js";
 import {isLoggedIn, isAdmin, verifyJWT} from "./middlewear.js";
 
+router.get('/season', (req, res) => {
+    let sql = `SELECT * FROM seasons`;
+    connection.query(sql, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send();
+        }
+        else {
+            console.log(result)
+            res.status(200).json({ result })
+        }
+    })
+})
+
 router.get("/", (req, res) => {
     let sql = `SELECT * FROM products_details where IS_AVAILABLE = 1`;
     connection.query(sql, (err, data) => {
@@ -28,5 +42,6 @@ router.get("/:id", (req, res) => {
         }
     })
 })
+
 
 export default router;

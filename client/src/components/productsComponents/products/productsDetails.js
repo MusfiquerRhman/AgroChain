@@ -18,9 +18,9 @@ import Paper from '@mui/material/Paper';
 import CardHeader from '@mui/material/CardHeader';
 import Skeleton from '@mui/material/Skeleton';
 
-import style from "../../styles/productDetailsStyle"
-import * as userApi from "../../api/users"
-import * as productApi from "../../api/products"
+import style from "../../../styles/productDetailsStyle"
+import * as userApi from "../../../api/users"
+import * as productApi from "../../../api/products"
 
 function ProductDetails() {
     const { enqueueSnackbar } = useSnackbar();
@@ -66,7 +66,7 @@ function ProductDetails() {
             }
         }
         getData();
-    }, [id])
+    }, [])
 
     const handleChange = (event) => {
         setValue(event.target.value);
@@ -309,3 +309,31 @@ export default ProductDetails;
 //     PRODUCT_ID varchar(38),
 //     PRIMARY KEY (TAG_ID, PRODUCT_ID)
 // )
+
+// SELECT * 
+// 	FROM products_details AS P
+//     JOIN seasons_map as SM
+//     	ON P.PRODUCT_ID = SM.PRODUCT_ID
+//     JOIN seasons as S
+//     	ON SM.SEASON_ID = S.SEASON_ID
+//     JOIN tags_map as TM
+//     	ON TM.PRODUCT_ID = P.PRODUCT_ID
+//     JOIN tags as T
+//     	ON T.TAG_ID = TM.TAG_ID
+// 	WHERE P.PRODUCT_ID = '04b5fbee-8fd9-11ec-aac3-38d5470f2067'
+
+// SELECT DISTINCT p.PRODUCT_NAME_EN, p.PRODUCT_NAME_BN, SM.SEASON_NAME, SM.SEASON_DESCRIPTION, TM.TAG_NAME, TM.TAG_DESCRIPTION, P.PRODUCT_IN_STOCK_QUANTITY, 				  						P.PRODUCT_MEASUREMENT_UNIT, P.PRODUCT_AGRO_PRICE, P.PRODUCT_AGRO_PRICE, P.PRODUCT_DISCOUNT, P.PRODUCT_IMG, P.PRODUCT_DETAILS
+// 	FROM products_details AS P 
+//     LEFT OUTER JOIN 
+//        	(SELECT DISTINCT seasons_map.SEASON_ID, seasons_map.PRODUCT_ID, seasons.SEASON_NAME, seasons.SEASON_DESCRIPTION FROM seasons_map
+//         	JOIN seasons
+//          	ON seasons_map.SEASON_ID = seasons.SEASON_ID
+//         ) SM 
+//             ON SM.PRODUCT_ID = P.PRODUCT_ID
+//     LEFT OUTER JOIN
+//     	(SELECT DISTINCT tags_map.TAG_ID, tags_map.PRODUCT_ID, tags.TAG_NAME, tags.TAG_DESCRIPTION FROM tags_map
+//          	JOIN tags
+//          	ON tags_map.TAG_ID = tags_map.TAG_ID
+//         ) TM
+//         	ON TM.PRODUCT_ID = P.PRODUCT_ID
+//     WHERE P.PRODUCT_ID = 'd8496008-8fe6-11ec-aac3-38d5470f2067'

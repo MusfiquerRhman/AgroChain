@@ -26,18 +26,19 @@ export default function SeasonsItems(props) {
 
     const {
         SEASON_DESCRIPTION,
-        SEASON_END_DAY,
-        SEASON_END_MONTH,
+        SEASON_END_DATE,
         SEASON_NAME,
-        SEASON_START_DAY,
-        SEASON_START_MONTH,
+        SEASON_START_DATE,
         SEASON_ID
     } = props
 
-    let startMonth = SEASON_START_MONTH + 1;
-    let startDay = SEASON_START_DAY;
-    let endMonth = SEASON_END_MONTH + 1;
-    let endDay = SEASON_END_DAY;
+    const stert_Date = new Date(SEASON_START_DATE);
+    const end_Date = new Date(SEASON_END_DATE);
+
+    let startMonth = stert_Date.getMonth() + 1;
+    let startDay = stert_Date.getDate();
+    let endMonth = end_Date.getMonth() + 1;
+    let endDay = end_Date.getDate();
 
     if (startMonth <= 9) {
         startMonth = `0${startMonth}`
@@ -86,7 +87,7 @@ export default function SeasonsItems(props) {
     }
 
     const updateForm = async () => {
-        const res = await adminApi.updateSeasons(seasonName, startDate.getDate(), startDate.getMonth(), endDate.getDate(), endDate.getMonth(), description, SEASON_ID)
+        const res = await adminApi.updateSeasons(seasonName, startDate, endDate, description, SEASON_ID)
         if (res.status === 200) {
             enqueueSnackbar(`Successfully updated`, {variant: 'info'});
             setOpenEditForm(false);

@@ -1,20 +1,12 @@
 import './App.css'
 import React, { useEffect } from 'react';
-import NavBar from "./components/navbarComponents/NavBar"
 import Grid from '@mui/material/Grid';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { getProducts } from './actions/products'
 import { SnackbarProvider } from 'notistack';
 
-import ProductsList from './components/productsComponents/ProductsList'
-import ProdutDetails from './components/productsComponents/productsDetails'
-import AddProducts from './components/adminComponents/AddProducts'
-import Login from './components/userComponents/login'
-import Registration from './components/userComponents/registration'
-import Cart from './components/productsComponents/cart/cart'
-import Seasons from './components/productsComponents/seasons/seasons'
-import Tags from './components/productsComponents/tags/tags';
+import {ProductsList, ProductDetails, AddProducts, Login, Registration, Cart, Seasons, Tags, NavBar, ManageProducts} from "./components"
 
 const App = () => {
     const dispatch = useDispatch();
@@ -33,11 +25,12 @@ const App = () => {
                                 <Route exact path='/' element={<ProductsList />} />
                                 <Route exact path='/registration' element={<Registration />} />
                                 <Route exact path='/login' element={<Login />} />
-                                <Route exact path='/products/:id' element={<ProdutDetails />} />
+                                <Route exact path='/products/:id' element={<ProductDetails />} />
                                 <Route exact path='/user/cart' element={<Cart />} />
                                 <Route exact path='/avater/addproducts' element={<AddProducts />} />
                                 <Route exact path='/avater/seasons' element={<Seasons />} />
                                 <Route exact path='/avater/tags' element={<Tags />} />
+                                <Route exact path='/avater/manageproducts' element={<ManageProducts />} />
                             </Routes >
                         </Grid>
                     </Grid>

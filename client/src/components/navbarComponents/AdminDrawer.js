@@ -89,7 +89,7 @@ export default function AdminDrawer({handleDrawerClose, open}){
 						component="div"
 						sx={{ display: { sm: 'block' } }}
 					>
-					<Link to="/" >Manage Products</Link>
+					<Link to="/avater/manageproducts" >Manage Products</Link>
 					</Typography>
 				</ListItem>
 			</List>

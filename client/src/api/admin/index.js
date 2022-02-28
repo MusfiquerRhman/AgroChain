@@ -4,14 +4,12 @@ const API_URL = 'http://localhost:5000/api/avater'
 
 axios.defaults.withCredentials = true;
 
-export const addSeason = async (seasonName, startDay, startMonth, endDay, endMonth, description) => {
+export const addSeason = async (seasonName, startDate, endDate, description) => {
     try {
         const formdata = new FormData();
         formdata.append("seasonName", seasonName);
-        formdata.append("startDay", startDay);
-        formdata.append("endDay", endDay);
-        formdata.append("startMonth", startMonth);
-        formdata.append("endMonth", endMonth);
+        formdata.append("startDate", startDate);
+        formdata.append("endDate", endDate);
         formdata.append("description", description);
         return await authAxios.post(`${API_URL}/season`, formdata);
     }
@@ -41,14 +39,12 @@ export const deleteSeasons = async (id) => {
 }
 
 
-export const updateSeasons = async (seasonName, startDay, startMonth, endDay, endMonth, description, id) => {
+export const updateSeasons = async (seasonName, startDate, endDate, description, id) => {
     try{
         const formdata = new FormData();
         formdata.append("seasonName", seasonName);
-        formdata.append("startDay", startDay);
-        formdata.append("startMonth", startMonth);
-        formdata.append("endDay", endDay);
-        formdata.append("endMonth", endMonth);
+        formdata.append("startDate", startDate);
+        formdata.append("endDate", endDate);
         formdata.append("description", description);
 
         return await authAxios.put(`${API_URL}/season/${id}`, formdata);

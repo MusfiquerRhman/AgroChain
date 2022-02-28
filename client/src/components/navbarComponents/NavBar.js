@@ -66,7 +66,7 @@ export default function NavBar(){
             }
         }
         fetchData();
-    }, [users.userId])
+    }, [dispatch, users.userId])
 
     
     const handleProfileMenuOpen = (event) => {
