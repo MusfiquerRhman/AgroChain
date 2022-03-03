@@ -1,5 +1,6 @@
 import { makeStyles } from "@mui/styles"
 
+
 const style = makeStyles((theme) => ({
     form: {
         margin: "3rem 1rem",
@@ -8,7 +9,7 @@ const style = makeStyles((theme) => ({
     },
     imagetext: {
         padding: "10rem 5rem",
-        border: "5px solid #006B63",
+        border: `5px solid ${theme.palette.primary.light}`,
     },
     image: {
         width: "100%",
@@ -16,7 +17,7 @@ const style = makeStyles((theme) => ({
         paddingTop: "3rem",
     },
     flashMessages: {
-        color: "#DC0000"
+        color: theme.palette.error.main
     },
     formBox: {
         [theme.breakpoints.up('xl')]: {

@@ -118,3 +118,12 @@ export const tagsShort = async () => {
         return -1;
     }
 }
+
+export const getAllProducts = async () => {
+    try {
+        return await authAxios.get(`${API_URL}/all`)
+    }
+    catch(err){
+        return -1;
+    }
+}

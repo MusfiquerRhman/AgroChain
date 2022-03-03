@@ -10,9 +10,9 @@ const theme = createTheme({
             contrastText: "#FFFFFF",
         },
         secondary: {
-            main: "#4CAF50",
-            light: "#29BB89",
-            dark: "#1E6F5C",
+            main: "#9D7FD7",
+            light: "#A992DB",
+            dark: "#8C6AD1",
             contrastText: "#FFFFFF",
         },
         error: {

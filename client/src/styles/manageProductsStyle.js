@@ -1,5 +1,6 @@
 import { makeStyles } from "@mui/styles"
 
+
 const style = makeStyles((theme) => ({
     activeProductsHeaderText: {
         margin: 0,
@@ -15,6 +16,11 @@ const style = makeStyles((theme) => ({
         paddingBottom: '1rem',
         paddingRight: '1rem',
         paddingLeft: '1rem',
+    },
+    cardBox: {
+        display: 'flex', 
+        flexDirection: 'column',  
+        width: '100%',
     }
 }));
 

@@ -8,14 +8,14 @@ const style = makeStyles((theme) => ({
     },
     imagetext: {
         padding: "10rem 5rem",
-        border: "5px solid #006B63",
+        border: `5px solid ${theme.palette.primary.light}`,
     },
     image: {
         width: "100%",
         height: "40vh"
     },
     flashMessages: {
-        color: "#DC0000"
+        color: theme.palette.error.main
     },
     formBox: {
         [theme.breakpoints.up('xl')]: {

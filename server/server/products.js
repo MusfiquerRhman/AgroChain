@@ -21,7 +21,7 @@ router.get('/season', (req, res) => {
 })
 
 router.get("/", (req, res) => {
-    let sql = `SELECT * FROM products_details where IS_AVAILABLE = 1`;
+    let sql = `SELECT PRODUCT_ID, PRODUCT_NAME_EN, PRODUCT_NAME_BN, PRODUCT_IN_STOCK_QUANTITY, PRODUCT_MEASUREMENT_UNIT, PRODUCT_AGRO_PRICE, PRODUCT_DISCOUNT, PRODUCT_IMG FROM products_details where IS_AVAILABLE = 1 LIMIT 0, 20`;
     connection.query(sql, (err, data) => {
         if(err){
             res.status(500).send();
@@ -33,7 +33,7 @@ router.get("/", (req, res) => {
 
 router.get("/:id", (req, res) => {
     var id = req.params.id;
-    let sql = `SELECT * FROM products_details WHERE PRODUCT_ID = ?`;
+    let sql = `SELECT PRODUCT_ID, PRODUCT_NAME_EN, PRODUCT_NAME_BN, PRODUCT_IN_STOCK_QUANTITY, PRODUCT_MEASUREMENT_UNIT, PRODUCT_AGRO_PRICE, PRODUCT_DISCOUNT, PRODUCT_IMG, PRODUCT_DETAILS FROM products_details WHERE PRODUCT_ID = ? LIMIT 0, 20`;
     connection.query(sql, [id], (err, data) => {
         if(err){
             res.status(500).send();

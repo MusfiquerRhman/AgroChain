@@ -221,6 +221,18 @@ router.delete("/tags/:id", isAdmin, verifyJWT, upload, (req, res) => {
             res.status(200).send();
         }
     })
+});
+
+router.get("/all", isAdmin, verifyJWT, upload, (req, res) => {
+    const sql = "SELECT * FROM `products_details` LIMIT 0, 20";
+    connection.query(sql, (err, result) => {
+        if(err){
+            res.status(500).send();
+        }
+        else {
+            res.status(200).send(result);
+        }
+    })
 })
 
 
